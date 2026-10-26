@@ -6,7 +6,7 @@ import { rehypeHeadingAnchor } from './src/lib/rehype-heading-anchor.ts';
 import { rehypeContentImages } from './src/lib/rehype-content-images.ts';
 
 export default defineConfig({
-  site: 'https://bytego.cloud',
+  site: 'https://celanwang.github.io',
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {
