@@ -1,0 +1,86 @@
+---
+import type { BlogPost } from '../lib/posts';
+import { estimateReadingMinutes, readingLabel } from '../lib/posts';
+
+interface Props {
+  posts: BlogPost[];
+}
+
+const { posts } = Astro.props;
+---
+
+{posts.length > 0 && (
+  <section class="related">
+    <h2>Keep reading</h2>
+    <ul>
+      {posts.map((post) => {
+        const minutes = estimateReadingMinutes(post.body);
+        return (
+          <li>
+            <a href={`/blog/${post.id}/`}>
+              <span class="title">{post.data.title}</span>
+              <span class="meta">{readingLabel(minutes)}</span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </section>
+)}
+
+<style>
+  .related {
+    margin-top: 2.75rem;
+  }
+
+  h2 {
+    margin: 0 0 1.1rem;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: var(--ink-soft);
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+
+  li {
+    border-bottom: 1px solid var(--line);
+  }
+
+  a {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: baseline;
+    min-height: 2.75rem;
+    padding: 0.95rem 0;
+    transition: color 0.2s var(--ease);
+  }
+
+  a:hover .title {
+    color: var(--accent);
+  }
+
+  .title {
+    min-width: 0;
+    font-weight: 600;
+    line-height: 1.4;
+    line-break: strict;
+    overflow-wrap: anywhere;
+    transition: color 0.2s var(--ease);
+  }
+
+  .meta {
+    flex-shrink: 0;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+</style>

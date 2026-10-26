@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedPosts } from '../../lib/posts';
+
+const posts = await getPublishedPosts();
+const counts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of new Set(post.data.tags)) {
+    counts.set(tag, (counts.get(tag) || 0) + 1);
+  }
+}
+const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-CN'));
+---
+
+<BaseLayout title="Tags" description="Browse Byte Cloud posts by topic.">
+  <section class="section tags-page">
+    <div class="container">
+      <h1 class="display page-title">Tags</h1>
+      <p class="page-intro">Browse by topic.</p>
+
+      <ul class="tag-list">
+        {tags.map(([tag, count]) => (
+          <li>
+            <a href={`/tags/${encodeURIComponent(tag)}/`}>
+              <span class="name">{tag}</span>
+              <em class="count">{count} {count === 1 ? 'post' : 'posts'}</em>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-intro {
+    margin-bottom: 3rem;
+  }
+
+  .tag-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 3rem;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .tag-list li {
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .tag-list a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0.85rem 0.1rem;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .tag-list a:hover .name {
+    color: var(--accent);
+  }
+
+  .name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .count {
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+    font-size: var(--fs-small);
+    font-weight: 500;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .tag-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+*.log
+.env
+.env.*
+!/.tools/
+scripts/fonts-src/
+scripts/feishu-posts.local.json

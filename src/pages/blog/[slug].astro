@@ -1,0 +1,671 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Toc from '../../components/Toc.astro';
+import PostNav from '../../components/PostNav.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+import { render } from 'astro:content';
+import {
+  estimateReadingMinutes,
+  getAdjacentPosts,
+  getPublishedPosts,
+  getRelatedPosts,
+  readingLabel,
+} from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post, posts },
+  }));
+}
+
+const { post, posts } = Astro.props;
+const { Content, headings } = await render(post);
+const minutes = estimateReadingMinutes(post.body);
+const { prev, next } = getAdjacentPosts(posts, post.id);
+const related = getRelatedPosts(posts, post, 3);
+
+const dateFormat: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+};
+const dateLabel = post.data.pubDate.toLocaleDateString('en-US', dateFormat);
+
+const updated = post.data.updatedDate;
+const showUpdated =
+  updated instanceof Date &&
+  updated.toISOString().slice(0, 10) !== post.data.pubDate.toISOString().slice(0, 10);
+const updatedLabel = showUpdated
+  ? updated.toLocaleDateString('en-US', dateFormat)
+  : null;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+  author: {
+    '@type': 'Person',
+    name: 'Chen Wang',
+    url: 'https://github.com/celanwang',
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': new URL(`/blog/${post.id}/`, Astro.site).href,
+  },
+  url: new URL(`/blog/${post.id}/`, Astro.site).href,
+  publisher: {
+    '@type': 'Person',
+    name: 'Chen Wang',
+  },
+};
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  type="article"
+  jsonLd={jsonLd}
+>
+  <div class="progress" data-reading-progress aria-hidden="true">
+    <div class="progress-bar" data-reading-progress-bar></div>
+  </div>
+
+  <article class="section post">
+    <div class="container post-shell">
+      <div class="post-head-block">
+        <a class="back" href="/blog">← All posts</a>
+        <header class="post-head">
+          <h1 class="display">{post.data.title}</h1>
+          <p class="post-deck">{post.data.description}</p>
+          <div class="meta">
+            <div class="meta-line">
+              <time datetime={post.data.pubDate.toISOString()}>{dateLabel}</time>
+              <span aria-hidden="true">·</span>
+              <span class="minutes">{readingLabel(minutes)}</span>
+              {updatedLabel && (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span class="updated">Updated {updatedLabel}</span>
+                </>
+              )}
+            </div>
+            <ul class="tags">
+              {post.data.tags.map((tag) => (
+                <li><a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a></li>
+              ))}
+            </ul>
+          </div>
+        </header>
+      </div>
+
+      <aside class="post-toc">
+        <Toc headings={headings} />
+      </aside>
+
+      <div class="post-body">
+        <div class="prose" data-prose>
+          <Content />
+        </div>
+
+        <PostNav prev={prev} next={next} />
+        <RelatedPosts posts={related} />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post {
+    padding-top: 4rem;
+  }
+
+  .progress {
+    position: fixed;
+    top: 4.25rem;
+    left: 0;
+    right: 0;
+    z-index: 39;
+    height: 2px;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  .progress-bar {
+    height: 100%;
+    width: 100%;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .post-shell {
+    display: grid;
+    gap: 1.25rem 2rem;
+    width: min(100% - 2.5rem, var(--measure));
+  }
+
+  .post-head-block,
+  .post-body,
+  .post-toc {
+    min-width: 0;
+  }
+
+  .post-head-block .back {
+    align-items: center;
+    min-height: 2.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .post-head h1 {
+    margin: 0;
+    font-size: var(--fs-title);
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.3;
+    line-break: strict;
+    overflow-wrap: break-word;
+  }
+
+  .post-deck {
+    max-width: 38rem;
+    margin: 1.25rem 0 0;
+    color: var(--muted);
+    font-size: 1.125rem;
+    line-height: 1.75;
+    line-break: strict;
+    overflow-wrap: break-word;
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    margin-top: 1.25rem;
+  }
+
+  .meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.65rem;
+    color: var(--muted);
+  }
+
+  time,
+  .minutes,
+  .updated {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tags a {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.12rem 0.55rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink-soft);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.5;
+    transition: color var(--duration) var(--ease), border-color var(--duration) var(--ease),
+      background var(--duration) var(--ease);
+  }
+
+  .tags a:hover {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+    background: var(--accent-soft);
+  }
+
+  .prose {
+    min-width: 0;
+    max-width: 100%;
+    margin-top: 3rem;
+    font-size: 1.0625rem;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    hanging-punctuation: first allow-end;
+    text-autospace: normal;
+    line-break: strict;
+    overflow-wrap: break-word;
+  }
+
+  .prose :global(h2),
+  .prose :global(h3),
+  .prose :global(h4) {
+    position: relative;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.4;
+    line-break: strict;
+    scroll-margin-top: 5.5rem;
+  }
+
+  .prose :global(h2) {
+    margin: 3.25rem 0 1.1rem;
+    font-size: clamp(var(--fs-h2), 1.35rem + 0.6vw, 1.75rem);
+  }
+
+  .prose :global(h3) {
+    margin: 2.5rem 0 0.9rem;
+    font-size: clamp(var(--fs-h3), 1.15rem + 0.4vw, 1.375rem);
+  }
+
+  .prose :global(h4) {
+    margin: 2rem 0 0.75rem;
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+
+  .prose :global(.heading-anchor) {
+    display: inline-block;
+    margin-left: 0.35em;
+    font-size: 0.75em;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--accent);
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity var(--duration) var(--ease);
+  }
+
+  .prose :global(.heading-anchor)::before {
+    content: "#";
+  }
+
+  .prose :global(h2:hover .heading-anchor),
+  .prose :global(h3:hover .heading-anchor),
+  .prose :global(h4:hover .heading-anchor),
+  .prose :global(.heading-anchor:focus-visible) {
+    opacity: 1;
+  }
+
+  .prose :global(p),
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0 0 1.4rem;
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: 1.25rem;
+  }
+
+  .prose :global(li) { margin: 0.4rem 0; }
+
+  .prose :global(a) {
+    color: var(--ink);
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+    text-underline-offset: 0.2em;
+    transition: color var(--duration) var(--ease), text-decoration-color var(--duration) var(--ease);
+  }
+
+  .prose :global(a:hover) {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
+  .prose :global(strong) { color: var(--ink); }
+
+  .prose :global(blockquote) {
+    margin: 1.75rem 0;
+    padding: 0.2rem 0 0.2rem 1.1rem;
+    border-left: 2px solid var(--accent);
+    color: var(--ink);
+  }
+
+  .prose :global(hr) {
+    margin: 2.5rem 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .prose :global(img) {
+    margin: 1.75rem 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--bg-elevated);
+  }
+
+  .prose :global(figure) {
+    margin: 2rem 0;
+    padding: 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface-muted);
+  }
+
+  .prose :global(figure > p) {
+    margin: 0;
+  }
+
+  .prose :global(.figure-link) {
+    display: block;
+    margin: 1.75rem 0;
+    border-radius: var(--radius-sm);
+    cursor: zoom-in;
+    text-decoration: none;
+  }
+
+  .prose :global(figure .figure-link) {
+    margin: 0;
+  }
+
+  .prose :global(figure img),
+  .prose :global(.figure-link img) {
+    margin: 0;
+    background: var(--bg-elevated);
+  }
+
+  .prose :global(figcaption) {
+    margin: 0.75rem 0.25rem 0;
+    color: var(--muted);
+    font-size: 0.875rem;
+    line-height: 1.65;
+    line-break: strict;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .prose :global(.figure-original) {
+    margin-left: 0.25rem;
+    color: var(--muted);
+    font-size: var(--fs-small);
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: 0.2em;
+    white-space: nowrap;
+  }
+
+  .prose :global(.figure-original:hover) {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
+  .prose :global(.code-wrap) {
+    position: relative;
+    margin: 1.85rem 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--code-bg);
+    overflow: hidden;
+  }
+
+  .prose :global(.code-head) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 2.35rem;
+    padding: 0.35rem 0.55rem 0.35rem 0.95rem;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--code-head-bg);
+  }
+
+  .prose :global(.code-lang) {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .prose :global(.code-wrap pre) {
+    margin: 0;
+    padding: 1rem 1.15rem;
+    overflow-x: auto;
+    background: transparent !important;
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  .prose :global(.copy-btn) {
+    flex-shrink: 0;
+    padding: 0.28rem 0.7rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color var(--duration) var(--ease), border-color var(--duration) var(--ease),
+      background var(--duration) var(--ease);
+  }
+
+  .prose :global(.copy-btn)::before {
+    content: "Copy";
+  }
+
+  .prose :global(.copy-btn[data-state='copied'])::before {
+    content: "Copied";
+  }
+
+  .prose :global(.copy-btn[data-state='failed'])::before {
+    content: "Failed";
+  }
+
+  .prose :global(.copy-btn:hover),
+  .prose :global(.copy-btn[data-state='copied']) {
+    color: var(--ink);
+    border-color: var(--line);
+    background: var(--bg-elevated);
+  }
+
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  .prose :global(:not(pre) > code) {
+    padding: 0.12rem 0.35rem;
+    border-radius: 5px;
+    background: var(--accent-soft);
+    color: var(--ink);
+    overflow-wrap: anywhere;
+    white-space: normal;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .prose :global(.table-frame) {
+    position: relative;
+    max-width: 100%;
+    margin: 1.75rem 0;
+  }
+
+  .prose :global(.table-frame)::before,
+  .prose :global(.table-frame)::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 1.6rem;
+    z-index: 1;
+    width: 1.5rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--duration) var(--ease);
+  }
+
+  .prose :global(.table-frame)::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg), transparent);
+  }
+
+  .prose :global(.table-frame)::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg), transparent);
+  }
+
+  .prose :global(.table-frame[data-left-edge='true'])::before,
+  .prose :global(.table-frame[data-right-edge='true'])::after {
+    opacity: 1;
+  }
+
+  .prose :global(.table-scroll) {
+    width: 100%;
+    max-width: 100%;
+    margin: 1.75rem 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    border-radius: var(--radius-sm);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .prose :global(.table-frame > .table-scroll) {
+    margin: 0;
+  }
+
+  .prose :global(.table-scroll-hint) {
+    display: none;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0.45rem 0.1rem 0;
+    border-top: 1px solid var(--line-soft);
+    color: var(--muted);
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+
+  .prose :global(.table-frame[data-overflow='true'] .table-scroll-hint) {
+    display: flex;
+  }
+
+  .prose :global(.table-scroll table) {
+    width: 100%;
+    min-width: max-content;
+    border-collapse: collapse;
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .prose :global(th),
+  .prose :global(td) {
+    border: 1px solid var(--line);
+    padding: 0.65rem 0.75rem;
+    text-align: left;
+  }
+
+  .prose :global(th) {
+    background: var(--surface-muted);
+    color: var(--ink);
+  }
+
+  @media (pointer: coarse) {
+    .tags a {
+      min-height: 2.75rem;
+      padding-inline: 0.75rem;
+    }
+
+    .prose :global(.copy-btn) {
+      min-width: 3.75rem;
+      min-height: 2.75rem;
+    }
+  }
+
+  @media (min-width: 1080px) {
+    .post-shell {
+      grid-template-columns: minmax(0, var(--measure)) 220px;
+      grid-template-areas:
+        "head toc"
+        "body toc";
+      justify-content: space-between;
+      align-items: start;
+      width: min(100% - 2.5rem, 1120px);
+    }
+
+    .post-head-block { grid-area: head; }
+    .post-toc {
+      grid-area: toc;
+      align-self: stretch;
+      padding-top: 0.35rem;
+    }
+    .post-body { grid-area: body; }
+  }
+</style>
+
+<script>
+  const bar = document.querySelector('[data-reading-progress-bar]');
+  const prose = document.querySelector('[data-prose]');
+
+  function updateProgress() {
+    if (!(bar instanceof HTMLElement) || !(prose instanceof HTMLElement)) return;
+    const start = prose.offsetTop - 96;
+    const end = prose.offsetTop + prose.offsetHeight - window.innerHeight;
+    const range = end - start;
+    const ratio = range > 0 ? (window.scrollY - start) / range : 1;
+    bar.style.transform = `scaleX(${Math.min(1, Math.max(0, ratio))})`;
+  }
+
+  updateProgress();
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+
+  document.querySelectorAll('[data-prose] .copy-btn').forEach((btn) => {
+    if (!(btn instanceof HTMLButtonElement)) return;
+    btn.addEventListener('click', async () => {
+      const wrap = btn.closest('.code-wrap');
+      const pre = wrap?.querySelector('pre');
+      const code = pre?.querySelector('code')?.textContent ?? pre?.textContent ?? '';
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.dataset.state = 'copied';
+        setTimeout(() => {
+          delete btn.dataset.state;
+        }, 1600);
+      } catch {
+        btn.dataset.state = 'failed';
+        setTimeout(() => {
+          delete btn.dataset.state;
+        }, 1600);
+      }
+    });
+  });
+
+  const tableRegions = [
+    ...document.querySelectorAll<HTMLElement>('.table-frame > .table-scroll'),
+  ];
+
+  function updateTable(region: HTMLElement) {
+    const frame = region.parentElement;
+    if (!frame) return;
+    const maxScroll = region.scrollWidth - region.clientWidth;
+    const hasOverflow = maxScroll > 1;
+    frame.dataset.overflow = String(hasOverflow);
+    frame.dataset.leftEdge = String(hasOverflow && region.scrollLeft > 1);
+    frame.dataset.rightEdge = String(hasOverflow && region.scrollLeft < maxScroll - 1);
+  }
+
+  function updateTables() {
+    tableRegions.forEach(updateTable);
+  }
+
+  tableRegions.forEach((region) => {
+    region.addEventListener('scroll', () => updateTable(region), { passive: true });
+  });
+  updateTables();
+  window.addEventListener('resize', updateTables);
+  document.fonts.ready.then(updateTables);
+</script>

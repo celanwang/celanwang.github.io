@@ -1,0 +1,250 @@
+---
+const loopWords = ['think', 'build', 'measure', 'learn'];
+---
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <div class="identity fade-up">
+        <img src="/images/avatar.webp" alt="" width="40" height="40" loading="eager" decoding="async" />
+        <p class="eyebrow">Chen Wang — Agentic Engineer</p>
+      </div>
+      <h1 class="hero-title fade-up fade-up-delay-1">Notes on agentic engineering.</h1>
+      <p class="hero-lede fade-up fade-up-delay-2">
+        Building reliable agents through simple systems, explicit evaluation, and tight feedback loops.
+      </p>
+      <div class="actions fade-up fade-up-delay-3">
+        <a class="btn btn-primary" href="/blog">Read the posts</a>
+        <a class="btn btn-ghost" href="/about">About me</a>
+      </div>
+      <p class="loop-compact fade-up fade-up-delay-2" aria-label="think, build, measure, learn, repeat">
+        {loopWords.map((word, i) => (
+          <>
+            <span>{word}</span>
+            <span aria-hidden="true">{i < loopWords.length - 1 ? '→' : '↺'}</span>
+          </>
+        ))}
+      </p>
+    </div>
+
+    <figure class="loop-figure fade-up fade-up-delay-2">
+      <div class="loop-canvas" role="img" aria-label="A continuous engineering loop: think, build, measure, learn, repeat">
+        <svg viewBox="0 0 420 360" aria-hidden="true">
+          <defs>
+            <marker id="loop-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" />
+            </marker>
+          </defs>
+          <g class="loop-track">
+            <path d="M210 58 C280 58 330 108 330 180" marker-end="url(#loop-arrow)" />
+            <path d="M330 180 C330 252 280 302 210 302" marker-end="url(#loop-arrow)" />
+            <path d="M210 302 C140 302 90 252 90 180" marker-end="url(#loop-arrow)" />
+            <path d="M90 180 C90 108 140 58 210 58" marker-end="url(#loop-arrow)" />
+          </g>
+          <g class="loop-nodes">
+            <circle cx="210" cy="58" r="7" />
+            <circle cx="330" cy="180" r="7" />
+            <circle cx="210" cy="302" r="7" />
+            <circle cx="90" cy="180" r="7" />
+          </g>
+          <g class="loop-labels">
+            <text x="210" y="34" text-anchor="middle">think</text>
+            <text x="350" y="185">build</text>
+            <text x="210" y="334" text-anchor="middle">measure</text>
+            <text x="70" y="185" text-anchor="end">learn</text>
+          </g>
+          <text class="loop-center" x="210" y="177" text-anchor="middle">↺</text>
+          <text class="loop-center-label" x="210" y="205" text-anchor="middle">REPEAT</text>
+        </svg>
+      </div>
+      <figcaption>
+        <span>The engineering loop</span>
+        <span>Small loops. Better systems.</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding: 4.75rem 0 4rem;
+  }
+
+  .hero-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 26.25rem);
+    align-items: center;
+    gap: 4rem;
+  }
+
+  .hero-copy {
+    max-width: 36rem;
+  }
+
+  .identity {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .identity img {
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+  }
+
+  .hero-title {
+    margin: 1.5rem 0 0;
+    max-width: 17ch;
+    font-family: var(--font-display);
+    font-size: var(--fs-hero);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+    color: var(--ink);
+  }
+
+  .hero-lede {
+    margin: 1.25rem 0 0;
+    max-width: 34rem;
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .loop-figure {
+    margin: 0;
+  }
+
+  .loop-canvas {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--bg-elevated);
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size: 2.5rem 2.5rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .loop-canvas svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .loop-track {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.25;
+    opacity: 0.6;
+  }
+
+  .loop-track marker path,
+  #loop-arrow path {
+    fill: var(--accent);
+  }
+
+  .loop-nodes circle {
+    fill: var(--bg-elevated);
+    stroke: var(--accent);
+    stroke-width: 2;
+  }
+
+  .loop-labels {
+    fill: var(--ink);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .loop-center {
+    fill: var(--accent);
+    font-family: var(--font-body);
+    font-size: 2.75rem;
+  }
+
+  .loop-center-label {
+    fill: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
+  }
+
+  .loop-figure figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+  }
+
+  .loop-compact {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .hero-inner {
+      grid-template-columns: minmax(0, 1fr) minmax(17rem, 19rem);
+      gap: 2rem;
+    }
+
+    .loop-figure figcaption span:last-child {
+      display: none;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .hero {
+      padding: 3rem 0 2.5rem;
+    }
+
+    .hero-inner {
+      display: block;
+    }
+
+    .loop-figure {
+      display: none;
+    }
+
+    .hero-title {
+      margin-top: 1.25rem;
+    }
+
+    .hero-lede {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .actions {
+      margin-top: 1.75rem;
+    }
+
+    .loop-compact {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem 0.5rem;
+      margin: 1.5rem 0 0;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: var(--fs-small);
+    }
+
+    .loop-compact span:nth-child(even) {
+      color: var(--accent);
+    }
+  }
+</style>

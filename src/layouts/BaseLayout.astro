@@ -1,0 +1,102 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title = 'Byte Cloud',
+  description = 'Notes on agentic engineering.',
+  canonical,
+  image = '/og-default.jpg',
+  type = 'website',
+  jsonLd,
+} = Astro.props;
+
+const pageTitle = title === 'Byte Cloud' ? title : `${title} | Byte Cloud`;
+const canonicalURL = canonical
+  ? new URL(canonical, Astro.site)
+  : new URL(Astro.url.pathname, Astro.site);
+const imageURL = new URL(image, Astro.site);
+
+const siteDescription = 'Notes on agentic engineering.';
+
+const siteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Byte Cloud',
+  url: Astro.site?.href ?? 'https://bytego.cloud/',
+  description: siteDescription,
+  author: {
+    '@type': 'Person',
+    name: 'Chen Wang',
+    url: 'https://github.com/celanwang',
+    sameAs: ['https://github.com/celanwang'],
+  },
+};
+
+const structured = jsonLd
+  ? Array.isArray(jsonLd)
+    ? [siteJsonLd, ...jsonLd]
+    : [siteJsonLd, jsonLd]
+  : [siteJsonLd];
+
+const themeBoot = `(function(){try{var k='theme';var p=localStorage.getItem(k);if(p!=='light'&&p!=='dark'&&p!=='system')p='system';var dark=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=p==='system'?(dark?'dark':'light'):p;document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-theme-pref',p);}catch(e){document.documentElement.setAttribute('data-theme','light');document.documentElement.setAttribute('data-theme-pref','system');}})();`;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <script is:inline set:html={themeBoot} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Byte Cloud RSS"
+      href={new URL('/rss.xml', Astro.site)}
+    />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageURL} />
+    <meta property="og:site_name" content="Byte Cloud" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageURL} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link
+      rel="preload"
+      href="/fonts/manrope-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <script type="application/ld+json" set:html={JSON.stringify(structured.length === 1 ? structured[0] : structured)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="site-shell">
+      <Header />
+      <main class="site-main" id="main">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>

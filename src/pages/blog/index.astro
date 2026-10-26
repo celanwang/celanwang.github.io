@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostRow from '../../components/PostRow.astro';
+import { estimateReadingMinutes, getPublishedPosts, type BlogPost } from '../../lib/posts';
+
+const posts = await getPublishedPosts();
+
+const byYear = new Map<number, BlogPost[]>();
+for (const post of posts) {
+  const year = post.data.pubDate.getFullYear();
+  const group = byYear.get(year);
+  if (group) group.push(post);
+  else byYear.set(year, [post]);
+}
+const years = [...byYear.entries()].sort((a, b) => b[0] - a[0]);
+---
+
+<BaseLayout
+  title="Writing"
+  description="Essays and notes on AI agents and engineering practice by Chen Wang."
+>
+  <section class="section writing-page">
+    <div class="container">
+      <h1 class="display page-title">Writing</h1>
+      <p class="page-intro">Long-form notes on agentic engineering.</p>
+
+      <div class="years">
+        {years.map(([year, group]) => (
+          <section class="year-group" aria-label={`${year}`}>
+            <h2 class="year-head">
+              <span class="year">{year}</span>
+              <span class="count">{group.length} {group.length === 1 ? 'post' : 'posts'}</span>
+            </h2>
+            <div class="list">
+              {group.map((post) => (
+                <PostRow
+                  title={post.data.title}
+                  description={post.data.description}
+                  href={`/blog/${post.id}/`}
+                  date={post.data.pubDate}
+                  tags={post.data.tags}
+                  minutes={estimateReadingMinutes(post.body)}
+                />
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-intro {
+    margin-bottom: 3.5rem;
+  }
+
+  .years {
+    display: grid;
+    gap: 4rem;
+  }
+
+  .year-head {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .year {
+    font-family: var(--font-display);
+    font-size: var(--fs-h2);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+
+  .count {
+    font-size: var(--fs-small);
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .list :global(.post-row:last-child) {
+    border-bottom: 1px solid var(--line-soft);
+  }
+</style>

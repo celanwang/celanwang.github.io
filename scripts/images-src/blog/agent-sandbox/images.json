@@ -1,0 +1,65 @@
+[
+  {
+    "file": "01.png",
+    "alt": "青绿色立体线条插画：数据依次经过数据过滤、代码清理和身份检查后进入 Agent Sandbox，沙箱由多层护栏与盾牌环绕，内部标注执行运行时与隔离存储。",
+    "caption": "",
+    "kind": "photo",
+    "decorative": false
+  },
+  {
+    "file": "02.png",
+    "alt": "四向坐标图的上、下、左、右分别标注“隔离强度”“状态保真度”“成本”和“启动延迟”，呈现沙箱设计的四项权衡。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "03.png",
+    "alt": "Claude Code 沙箱逃逸流程：攻击者在 bwrap 沙箱内创建带 SessionStart 钩子的 settings.json，配置在退出后保留；受害者运行 Claude Code 时，恶意命令以完整宿主机权限执行。",
+    "caption": "图中标注 CVE-2026-25725、CVSS 7.7；settings.local.json 为只读，而默认不存在的 settings.json 没有对应的只读绑定。",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "04.png",
+    "alt": "Claude Code、Gemini CLI 与 Codex CLI 的配置层级对比，列出组织管理、全局用户和项目配置的覆盖关系，以及各工具的自动执行机制和沙箱内配置风险。",
+    "caption": "颜色图例区分组织或企业强制、全局用户与项目范围；每栏底部蓝框是自动执行入口，红框是对应的沙箱风险。",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "05.jpg",
+    "alt": "Agent Substrate 分层架构：Agent Runtime、Agent Harnesses 和自定义 Agent 与工具组成应用层，其下是提供 gVisor/MicroVM 沙箱隔离的 Agent Substrate、Kubernetes 与 IaaS/裸金属，旁侧列有其他 K8s 工作负载和 Blob storage。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "06.png",
+    "alt": "沙箱能力对比表：Browser Sandbox 用于网页抓取和表单填写（Firecrawl，Cloud Container）；Code Execution 用于数据分析和 Shell 脚本（E2B，MicroVM）；Full Dev Env 面向跨仓库的复杂编程 Agent（Docker，非特权容器或 MicroVM）。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "07.png",
+    "alt": "AI Agent 通过“write & run code”连接 E2B microVM 沙箱；沙箱内列出文件访问、进程执行、软件包安装，以及独立内核、根文件系统和网络命名空间。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "08.png",
+    "alt": "自动化修复流程：Agent System 提出修复建议，经 HITL 人工审批后，由 Approval Handler 通过 sandbox.Executor 分流到生产环境的 Job Executor（在沙盒命名空间创建 K8s Job）或开发环境的 Local Executor（运行本地进程）。",
+    "caption": "图中只展开“审批通过”后的执行路径，未画出审批拒绝或取消分支。",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "09.png",
+    "alt": "Agent 修复系统架构：Agent System 经 HITL 审批、Approval Handler 和 Backend Factory，按 SANDBOX_BACKEND 分流到本地、K8s Job 或 Cloud Provider，最终汇入 S3/COS/OSS 统一对象存储；Job 分支另列非 root、移除所有 Capabilities、最小权限 RBAC 和 NetworkPolicy。",
+    "caption": "cloud 分支与统一对象存储在图中标为“未来演进”；云分支示例为 AWS Fargate 和阿里云 ECI。",
+    "kind": "graphic",
+    "decorative": false
+  }
+]

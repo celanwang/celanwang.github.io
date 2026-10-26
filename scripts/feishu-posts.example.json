@@ -1,0 +1,12 @@
+[
+  {
+    "token": "REPLACE_WITH_YOUR_NODE_TOKEN",
+    "slug": "my-post-slug",
+    "title": "文章标题",
+    "pubDate": "2026-01-01",
+    "updatedDate": "2026-01-01",
+    "description": "文章描述。",
+    "tags": ["AI"],
+    "featured": false
+  }
+]

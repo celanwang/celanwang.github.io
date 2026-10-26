@@ -1,0 +1,28 @@
+{
+  "name": "byte-cloud",
+  "type": "module",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev --host 0.0.0.0 --port 4321",
+    "build": "astro build",
+    "prebuild": "npm run fonts",
+    "predev": "npm run fonts",
+    "preview": "astro preview --host 0.0.0.0 --port 4321",
+    "fonts": "node scripts/subset-fonts.mjs",
+    "images": "node scripts/optimize-images.mjs",
+    "deploy": "astro build && rsync -a --delete dist/ /var/www/byte-cloud/"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.4.1",
+    "astro": "^5.10.1"
+  },
+  "devDependencies": {
+    "@jsquash/jpeg": "^1.6.0",
+    "@jsquash/png": "^3.1.1",
+    "@jsquash/resize": "^2.1.1",
+    "@jsquash/webp": "^1.5.0",
+    "subset-font": "^2.9.0"
+  }
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "file": "01.png",
+    "alt": "以“AI时代本体论”为中心的彩色知识地图，向外展开基础概念、认知困境、三大技术路径、Palantir 架构、智能体应用与理性思考六类分支。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "02.png",
+    "alt": "手绘电商实体关系图，展示 Customer、Order、OrderLine、Product、Variant 等概念，以及下单、订单行、商品变体、分类、库存、门店和价格之间的有向关系。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "03.png",
+    "alt": "手绘检索增强生成流程图：文档经切分和嵌入写入向量库；用户查询经嵌入与相似度检索取得上下文，再由大模型生成回答。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "04.png",
+    "alt": "手绘哲学概念图，用 What／“这是什么？”与 How／“我怎么知道？”区分本体论和认识论，并以观察者、物体及多组箭头表现认知关系。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "05.png",
+    "alt": "以 Product 为中心的彩色节点关系图，连接 Order、Unit of measure、Category、Supplier、Warehouse 和 Customer 六类业务节点。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "06.png",
+    "alt": "Palantir Ontology 中文信息图：中央标注“企业的‘数字孪生’，动态、可操作的业务表示”，周围连接业务图标，左侧对比传统数据方法，右侧展示行业案例及成效数字。",
+    "caption": "右侧案例依次为 Kavanagh Construction、Tampa General Hospital 和 R1 RCM；图内未附成效数字的来源。",
+    "kind": "graphic",
+    "decorative": false
+  }
+]

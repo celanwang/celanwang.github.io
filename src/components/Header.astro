@@ -1,0 +1,387 @@
+---
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/blog', label: 'Writing' },
+  { href: '/tags', label: 'Tags' },
+  { href: '/about', label: 'About' },
+];
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href));
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="Byte Cloud home">
+      <span class="brand-name">byte.cloud</span>
+    </a>
+
+    <div class="header-right">
+      <nav class="nav-desktop" aria-label="Primary">
+        {links.map((link) => (
+          <a
+            href={link.href}
+            class:list={['nav-link', { active: isActive(link.href) }]}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        ))}
+      </nav>
+
+      <a
+        class="github-link"
+        href="https://github.com/celanwang"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chen Wang on GitHub"
+        title="Chen Wang on GitHub"
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="currentColor" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z" />
+        </svg>
+      </a>
+
+      <button
+        class="theme-toggle"
+        type="button"
+        data-theme-toggle
+        aria-label="Toggle theme"
+        title="Toggle theme"
+      >
+        <span class="icon icon-system" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="14" rx="2" />
+            <path d="M8 20h8" />
+          </svg>
+        </span>
+        <span class="icon icon-light" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+        </span>
+        <span class="icon icon-dark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 0 0 11.5 11.5z" />
+          </svg>
+        </span>
+      </button>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" data-nav-toggle>
+        <span class="sr-only">Menu</span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-nav" id="mobile-nav" hidden data-mobile-nav>
+    <div class="container mobile-nav-inner">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class:list={[{ active: isActive(link.href) }]}
+          aria-current={isActive(link.href) ? 'page' : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    background: var(--header-bg);
+    border-bottom: 1px solid transparent;
+    transition: background 0.25s var(--ease), border-color 0.25s var(--ease);
+  }
+
+  .site-header.is-scrolled {
+    background: var(--header-bg-scrolled);
+    border-bottom-color: var(--header-border-scrolled);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 4.25rem;
+    gap: 1rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .brand-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .nav-desktop {
+    display: none;
+    align-items: center;
+    gap: 1.6rem;
+  }
+
+  .nav-link {
+    position: relative;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.35rem;
+    width: 100%;
+    height: 1.5px;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s var(--ease);
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--ink);
+  }
+
+  .nav-link.active::after,
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  .github-link {
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    color: var(--ink-soft);
+    transition: color 0.2s var(--ease), background 0.2s var(--ease);
+  }
+
+  .github-link:hover {
+    color: var(--ink);
+    background: var(--surface-hover);
+  }
+
+  .theme-toggle {
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+  }
+
+  .theme-toggle:hover {
+    color: var(--ink);
+    border-color: var(--ink-soft);
+    background: var(--surface-hover);
+  }
+
+  .theme-toggle .icon {
+    display: none;
+    line-height: 0;
+  }
+
+  :global(html[data-theme-pref='system']) .theme-toggle .icon-system,
+  :global(html[data-theme-pref='light']) .theme-toggle .icon-light,
+  :global(html[data-theme-pref='dark']) .theme-toggle .icon-dark {
+    display: block;
+  }
+
+  .nav-toggle {
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-content: center;
+    gap: 6px;
+  }
+
+  .nav-toggle span {
+    display: block;
+    width: 1.2rem;
+    height: 2px;
+    background: var(--ink);
+    transition: transform 0.25s var(--ease), opacity 0.25s var(--ease);
+  }
+
+  .nav-toggle[aria-expanded='true'] span:first-of-type {
+    transform: translateY(4px) rotate(45deg);
+  }
+
+  .nav-toggle[aria-expanded='true'] span:last-of-type {
+    transform: translateY(-4px) rotate(-45deg);
+  }
+
+  .mobile-nav {
+    border-top: 1px solid var(--line-soft);
+    background: var(--mobile-nav-bg);
+    animation: slide-down 0.25s var(--ease);
+  }
+
+  .mobile-nav-inner {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.75rem 0 1rem;
+  }
+
+  .mobile-nav a {
+    padding: 0.75rem 0;
+    font-weight: 600;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--line-soft);
+    transition: color 0.2s var(--ease);
+  }
+
+  .mobile-nav a:hover,
+  .mobile-nav a.active {
+    color: var(--ink);
+  }
+
+  .mobile-nav a.active {
+    box-shadow: inset 2px 0 0 var(--accent);
+    padding-left: 0.65rem;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .nav-desktop { display: flex; }
+    .nav-toggle,
+    .mobile-nav { display: none !important; }
+    .header-right { gap: 1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-nav { animation: none; }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector('[data-nav-toggle]');
+  const panel = document.querySelector('[data-mobile-nav]');
+  const header = document.querySelector('.site-header');
+  const themeBtn = document.querySelector('[data-theme-toggle]');
+
+  function setMobileNav(open) {
+    if (!(toggle && panel)) return;
+    if (open) panel.removeAttribute('hidden');
+    else panel.setAttribute('hidden', '');
+    toggle.setAttribute('aria-expanded', String(open));
+  }
+
+  if (toggle && panel) {
+    toggle.addEventListener('click', () => {
+      setMobileNav(panel.hasAttribute('hidden'));
+    });
+
+    panel.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => setMobileNav(false));
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !panel.hasAttribute('hidden')) {
+        setMobileNav(false);
+        if (toggle instanceof HTMLElement) toggle.focus();
+      }
+    });
+  }
+
+  if (header instanceof HTMLElement) {
+    const onScroll = () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 8);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  const KEY = 'theme';
+  const order = ['system', 'light', 'dark'];
+  const labels = {
+    system: 'Theme: system (click for light)',
+    light: 'Theme: light (click for dark)',
+    dark: 'Theme: dark (click for system)',
+  };
+
+  function systemTheme() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function getPref() {
+    const p = localStorage.getItem(KEY);
+    return p === 'light' || p === 'dark' || p === 'system' ? p : 'system';
+  }
+
+  function applyPref(pref) {
+    const resolved = pref === 'system' ? systemTheme() : pref;
+    document.documentElement.setAttribute('data-theme', resolved);
+    document.documentElement.setAttribute('data-theme-pref', pref);
+    localStorage.setItem(KEY, pref);
+    if (themeBtn instanceof HTMLElement) {
+      themeBtn.setAttribute('aria-label', labels[pref]);
+      themeBtn.setAttribute('title', labels[pref]);
+    }
+    window.dispatchEvent(new CustomEvent('themechange', { detail: { pref, theme: resolved } }));
+  }
+
+  applyPref(getPref());
+
+  themeBtn?.addEventListener('click', () => {
+    const cur = getPref();
+    const next = order[(order.indexOf(cur) + 1) % order.length];
+    applyPref(next);
+  });
+
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  const onScheme = () => {
+    if (getPref() === 'system') applyPref('system');
+  };
+  if (typeof mq.addEventListener === 'function') mq.addEventListener('change', onScheme);
+  else mq.addListener(onScheme);
+</script>

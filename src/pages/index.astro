@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import PostRow from '../components/PostRow.astro';
+import { estimateReadingMinutes, getPublishedPosts } from '../lib/posts';
+
+const posts = await getPublishedPosts();
+const lead = posts.find((post) => post.data.featured) ?? posts[0];
+const rest = posts.filter((post) => post.id !== lead?.id).slice(0, 5);
+---
+
+<BaseLayout>
+  <Hero />
+
+  {lead && (
+    <section class="section latest">
+      <div class="container">
+        <div class="section-head">
+          <h2>Latest writing</h2>
+          <a class="link-more" href="/blog">All posts →</a>
+        </div>
+
+        <div class="list" data-reveal-list>
+          <div class="reveal" style="transition-delay: 0ms">
+            <PostRow
+              variant="lead"
+              badge={lead.data.featured ? 'Featured note' : 'Latest note'}
+              title={lead.data.title}
+              description={lead.data.description}
+              href={`/blog/${lead.id}/`}
+              date={lead.data.pubDate}
+              tags={lead.data.tags}
+              minutes={estimateReadingMinutes(lead.body)}
+            />
+          </div>
+          {rest.map((post, i) => (
+            <div class="reveal" style={`transition-delay: ${(i + 1) * 55}ms`}>
+              <PostRow
+                variant="row"
+                title={post.data.title}
+                description={post.data.description}
+                href={`/blog/${post.id}/`}
+                date={post.data.pubDate}
+                tags={post.data.tags}
+                minutes={estimateReadingMinutes(post.body)}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .latest {
+    padding-top: 0;
+  }
+
+  .latest .section-head {
+    margin-bottom: 2rem;
+  }
+
+  .latest .list :global(.lead) {
+    margin-bottom: 0.5rem;
+  }
+</style>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const list = document.querySelector('[data-reveal-list]');
+  const items = document.querySelectorAll('[data-reveal-list] .reveal');
+
+  if (!reduceMotion && list instanceof HTMLElement && items.length && 'IntersectionObserver' in window) {
+    list.classList.add('reveal-ready');
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-in');
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 }
+    );
+    items.forEach((el) => io.observe(el));
+  } else {
+    items.forEach((el) => el.classList.add('is-in'));
+  }
+</script>

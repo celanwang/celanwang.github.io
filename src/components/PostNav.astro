@@ -1,0 +1,107 @@
+---
+import type { BlogPost } from '../lib/posts';
+
+interface Props {
+  prev?: BlogPost;
+  next?: BlogPost;
+}
+
+const { prev, next } = Astro.props;
+---
+
+{(prev || next) && (
+  <nav class="post-nav" aria-label="Adjacent posts">
+    {prev ? (
+      <a class="nav-item prev" href={`/blog/${prev.id}/`}>
+        <span class="label">Older</span>
+        <span class="title">{prev.data.title}</span>
+      </a>
+    ) : (
+      <span class="nav-item placeholder" aria-hidden="true"></span>
+    )}
+    {next ? (
+      <a class="nav-item next" href={`/blog/${next.id}/`}>
+        <span class="label">Newer</span>
+        <span class="title">{next.data.title}</span>
+      </a>
+    ) : (
+      <span class="nav-item placeholder" aria-hidden="true"></span>
+    )}
+  </nav>
+)}
+
+<style>
+  .post-nav {
+    display: grid;
+    gap: 0;
+    margin-top: 3rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.3rem;
+    min-height: 2.75rem;
+    padding: 1.15rem 0;
+    border-bottom: 1px solid var(--line);
+    transition: color 0.2s var(--ease);
+  }
+
+  a.nav-item:hover .title {
+    color: var(--accent);
+  }
+
+  .placeholder {
+    display: none;
+  }
+
+  .label {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.02rem;
+    letter-spacing: 0;
+    line-height: 1.35;
+    line-break: strict;
+    overflow-wrap: anywhere;
+    color: var(--ink);
+    transition: color 0.2s var(--ease);
+  }
+
+  @media (min-width: 720px) {
+    .post-nav {
+      grid-template-columns: 1fr 1fr;
+      gap: 0 2rem;
+    }
+
+    .nav-item {
+      border-bottom: 0;
+      padding: 1.35rem 0 0.25rem;
+    }
+
+    .placeholder {
+      display: block;
+      visibility: hidden;
+    }
+
+    .prev {
+      border-right: 1px solid var(--line-soft);
+      padding-right: 1.5rem;
+    }
+
+    .next {
+      text-align: right;
+      padding-left: 0.5rem;
+    }
+  }
+</style>

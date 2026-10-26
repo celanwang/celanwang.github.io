@@ -1,0 +1,135 @@
+[
+  {
+    "file": "01.png",
+    "alt": "一双手在制表工作台前用镊子检查齿轮，周围散落着机芯、表盘和制表工具。",
+    "caption": "",
+    "kind": "photo",
+    "decorative": false
+  },
+  {
+    "file": "02.png",
+    "alt": "LLM 智能体任务与环境图：左侧列出终端、数据库、卡牌游戏、厨房操作和订机票等任务，右侧列出操作系统、知识图谱、模拟家居、网页购物与浏览等八类环境。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "03.webp",
+    "alt": "输入经 LLM 生成输出，LLM 还与检索、工具和记忆双向交互，分别交换查询与结果、调用与响应以及读写数据。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "04.webp",
+    "alt": "上下对比单轮与智能体评估：前者把提示和数据交给 LLM，再对响应评分；后者提供工具、沙盒环境和编写 MCP 服务器的任务，并以运行测试作为评分逻辑。",
+    "caption": "Agent 的自我报告不是评分依据；评分者会运行测试，确认 MCP 服务器确实可用。",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "05.png",
+    "alt": "用户通过 Agent Identity 向百炼 Agent 和 AgentRun Agent 提供身份凭证，Agent 经 AI 网关调用企业 API；右侧列出 Editor 创建小额订单与 Viewer 只读订单两个权限案例。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "06.webp",
+    "alt": "评估框架结构图：套件中的任务配置多类评分器、轮次、工具调用、Token 和延迟指标及多次试验；Agent harness 与评估框架交互，最终环境状态和完整轨迹共同进入评分。",
+    "caption": "图例中，Task 定义输入和成功标准，Trial 是一次执行，Trajectory 保存该次执行的完整记录。",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "07.png",
+    "alt": "立体信息插画串联四项评估建设原则：用 20–50 个真实任务尽早建立基准，从告警和边缘场景取材，由专家明确任务与黄金参考解，并用天平平衡行动与克制。",
+    "caption": "",
+    "kind": "photo",
+    "decorative": false
+  },
+  {
+    "file": "08.webp",
+    "alt": "从 0 到 8 的评估路线：尽早开始、从手动测试起步、编写无歧义任务、覆盖正反用例、构建稳健评估框架、慎重设计评分器、检查轨迹、监测饱和度并长期维护。",
+    "caption": "编号 0–3 属于评估套件开发，4–5 属于评估框架开发，6–8 属于持续维护。",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "09.webp",
+    "alt": "三层瑞士奶酪式质量防线：自动化评估负责一致度量和部署前回归拦截，人工轨迹审查与早期试用捕捉细微异常，生产监控、A/B 测试和用户反馈发现规模化真实使用中的边缘问题。",
+    "caption": "红色路径表示风险穿过多层防线的孔洞；单层都有盲区，因此需要组合使用。",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "10.webp",
+    "alt": "成功率折线对比 pass@k 与 pass^k：k 增大时，至少一次成功的曲线趋近 100%，全部成功的曲线趋近 0%；图内三次试验分别标注 97% 和 39%。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "11.png",
+    "alt": "终端记录 uv 安装 DeepEval 的过程：先因缺少 pyproject.toml 报错，初始化后又出现项目名与依赖同名错误，最后再次执行 uv add deepeval 并完成安装。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "12.png",
+    "alt": "DeepEval 终端报告：test_case 的 Correctness [GEval] 得分 1.0、阈值 0.5、状态 PASSED，整体成功率 100%，下方显示本次评估耗时和 Token 成本。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "13.png",
+    "alt": "IDE 中打开 latest_run_full.json，红框标出退款测试的输入、实际与预期输出、检索上下文和 GEval 指标；测试 success 为 true，Correctness 得分为 1。",
+    "caption": "红框中的 JSON 还记录裁判模型、输入与输出 Token 数、运行时长和评估成本，便于核对单次评测明细。",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "14.png",
+    "alt": "Deep Agents 能力组成图：执行环境包括代码解释器、沙箱和文件系统，委派能力包括规划与子代理，人工介入负责引导，上下文管理包括技能、记忆、摘要、上下文卸载和提示缓存。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "15.png",
+    "alt": "终端显示在 deepagents 项目中执行 uv sync --group test 完成依赖解析与检查，随后设置 DeepSeek API 密钥、评估接口地址以及 Agent 和裁判模型等环境变量。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "16.png",
+    "alt": "终端运行 test_core_behaviors.py 中指定的两个 pytest 测试，数据集加载 test_core_eval_dataset_loads 与 Agent 创建 test_create_eval_agent 均为 PASSED，汇总为 2 passed。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "17.png",
+    "alt": "终端两次执行 uv run --group test ruff check tests/evals，两次都返回 All checks passed!。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "18.png",
+    "alt": "read_todo_summary 单场景 DeepEval 报告中，Task Completion 和 Step Efficiency 均为 1.0，阈值均为 0.5，两项状态都是 PASSED，整体成功率 100%。",
+    "caption": "评分理由指出，该场景只调用一次 read_file 读取待办，再用一次 LLM 调用生成一句话总结，因此步骤效率为满分。",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "19.png",
+    "alt": "四个 DeepEval 场景的汇总报告均显示 PASSED 和 100% 成功率；前三组 Task Completion 与 Step Efficiency 都是 1.0，最后一组 Step Efficiency 为 0.75，仍高于 0.5 阈值。",
+    "caption": "0.75 分的理由是最终确认消息偏冗长，形成了可避免的小额冗余；编辑前读取现有内容则被视为必要步骤。",
+    "kind": "graphic",
+    "decorative": false
+  }
+]

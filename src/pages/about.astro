@@ -1,0 +1,353 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPublishedPosts } from '../lib/posts';
+
+const posts = await getPublishedPosts();
+const selectedWriting = ['agent-evaluation', 'agent-sandbox', 'go-122-method-routing'].flatMap((id) => {
+  const post = posts.find((item) => item.id === id);
+  return post ? [post] : [];
+});
+
+const experience = [
+  { name: 'Tencent', team: 'IEG Public Technology Line' },
+  { name: 'Baidu', team: 'Smart Living Group Education' },
+  { name: 'Momenta', team: 'Robo Autonomous Driving' },
+  { name: 'DP Technology', team: 'Bohr Space Station AI4S' },
+];
+
+const openSource = [
+  { name: 'AgentScope · ReMe', org: 'Alibaba', href: 'https://github.com/agentscope-ai' },
+  { name: 'Eino', org: 'ByteDance', href: 'https://github.com/cloudwego/eino' },
+  { name: 'tRPC-Agent-Go', org: 'Tencent', href: 'https://github.com/trpc-group/trpc-agent-go' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    name: 'Chen Wang',
+    alternateName: 'celanwang',
+    jobTitle: 'Agentic Engineer',
+    url: 'https://bytego.cloud/about/',
+    sameAs: ['https://github.com/celanwang'],
+    worksFor: { '@type': 'Organization', name: 'Tencent' },
+  },
+};
+---
+
+<BaseLayout
+  title="About"
+  description="About Chen Wang — Agentic Engineer. Notes on agentic engineering."
+  jsonLd={jsonLd}
+>
+  <section class="section about-page">
+    <div class="container about">
+      <header class="about-head">
+        <img
+          class="avatar"
+          src="/images/avatar.webp"
+          alt="Chen Wang"
+          width="72"
+          height="72"
+          loading="eager"
+          decoding="async"
+        />
+        <div>
+          <h1 class="display page-title">Chen Wang</h1>
+          <p class="role">Agentic Engineer</p>
+        </div>
+      </header>
+
+      <div class="copy">
+        <p>
+          I'm Chen Wang, a backend engineer exploring how AI agents fit into real
+          engineering. This blog is my digital garden — notes on agentic
+          engineering: from reliable service design to agents that genuinely
+          participate in building, collaborating, and shipping.
+        </p>
+        <p>
+          I believe good systems are simple, efficient, and maintainable — and good
+          agents are no different: the least abstraction that solves a real problem.
+        </p>
+      </div>
+
+      <section class="block" aria-labelledby="work-experience">
+        <h2 id="work-experience">Work Experience</h2>
+        <ul class="card-grid">
+          {experience.map((job) => (
+            <li class="card">
+              <span class="card-name">{job.name}</span>
+              <span class="card-team">{job.team}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="block" aria-labelledby="open-source">
+        <h2 id="open-source">Open Source</h2>
+        <ul class="card-grid">
+          {openSource.map((project) => (
+            <li>
+              <a class="card card-link" href={project.href} target="_blank" rel="noopener noreferrer">
+                <span class="card-name">{project.name}</span>
+                <span class="card-team">{project.org}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {selectedWriting.length > 0 && (
+        <section class="block" aria-labelledby="selected-writing">
+          <h2 id="selected-writing">Selected writing</h2>
+          <ul class="writing-list">
+            {selectedWriting.map((post) => (
+              <li>
+                <a href={`/blog/${post.id}/`}>
+                  <span class="writing-title">{post.data.title}</span>
+                  <span class="writing-topic">{post.data.tags.slice(0, 2).join(' · ')}</span>
+                  <span class="writing-arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section class="block" aria-labelledby="philosophy">
+        <h2 id="philosophy">Philosophy</h2>
+        <blockquote>
+          I'm currently focused on intelligence, artificial &amp; human. Models
+          improve by loops — and so do the engineers who build them. I live in
+          the loop I engineer.
+        </blockquote>
+      </section>
+
+      <section class="block" aria-labelledby="contact">
+        <h2 id="contact">Contact</h2>
+        <p class="contact-row">
+          <a class="contact-link" href="https://github.com/celanwang" target="_blank" rel="noopener noreferrer">
+            <span class="contact-label">GitHub</span>
+            <span class="contact-value">github.com/celanwang</span>
+          </a>
+        </p>
+        <p class="contact-row">
+          <a class="contact-link" href="mailto:lumworn@gmail.com">
+            <span class="contact-label">Email</span>
+            <span class="contact-value">lumworn@gmail.com</span>
+          </a>
+        </p>
+      </section>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about {
+    width: min(100% - 2.5rem, 44rem);
+  }
+
+  .about-head {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .avatar {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: var(--radius);
+    object-fit: cover;
+    border: 1px solid var(--line);
+  }
+
+  .role {
+    margin: 0.45rem 0 0;
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .copy {
+    margin-top: 2.25rem;
+  }
+
+  .copy p {
+    color: var(--ink-soft);
+    margin: 0 0 1.1rem;
+    line-height: 1.85;
+  }
+
+  .block {
+    margin-top: 3rem;
+  }
+
+  .block h2 {
+    margin: 0 0 1.1rem;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+
+  .writing-list {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+    list-style: none;
+  }
+
+  .writing-list li {
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .writing-list a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+
+  .writing-title {
+    font-weight: 600;
+    line-height: 1.4;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .writing-topic {
+    color: var(--muted);
+    font-size: var(--fs-small);
+    white-space: nowrap;
+  }
+
+  .writing-arrow {
+    color: var(--muted);
+    transition: color var(--duration) var(--ease), transform var(--duration) var(--ease);
+  }
+
+  .writing-list a:hover .writing-title,
+  .writing-list a:hover .writing-arrow {
+    color: var(--accent);
+  }
+
+  .writing-list a:hover .writing-arrow {
+    transform: translateX(2px);
+  }
+
+  .card-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1.25rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-elevated);
+    color: inherit;
+    transition: transform var(--duration) var(--ease), border-color var(--duration) var(--ease),
+      box-shadow var(--duration) var(--ease);
+  }
+
+  .card:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card-name {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .card-team {
+    font-size: var(--fs-small);
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .card-link {
+    text-decoration: none;
+  }
+
+  .card-link:hover .card-name {
+    color: var(--accent);
+  }
+
+  blockquote {
+    margin: 0;
+    padding: 0.6rem 0 0.6rem 1.1rem;
+    border-left: 2px solid var(--accent);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.7;
+  }
+
+  .contact-row {
+    margin: 0 0 0.75rem;
+  }
+
+  .contact-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .contact-label {
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--muted);
+    min-width: 3.5rem;
+  }
+
+  .contact-value {
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: 0.2em;
+    transition: color var(--duration) var(--ease), text-decoration-color var(--duration) var(--ease);
+  }
+
+  .contact-link:hover .contact-value {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
+  @media (max-width: 560px) {
+    .card-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .writing-topic {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card:hover,
+    .writing-list a:hover .writing-arrow {
+      transform: none;
+    }
+  }
+</style>

@@ -1,0 +1,79 @@
+[
+  {
+    "file": "01.png",
+    "alt": "三款应用与 Slack、GDrive、GitHub、PostgreSQL 交叉相连，右侧对比逐应用自建工具的 m×n 与共享 MCP 服务器的 m+n。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "02.png",
+    "alt": "左右对比三种应用接入 Slack、PostgreSQL、GDrive 和 GitHub 的方式：无 MCP 时逐对交叉连接，有 MCP 时经中央 MCP Protocol 节点统一连接。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "03.png",
+    "alt": "MCP Host 内的 AI Agent 经 MCP Client 从 MCP Server 获取工具列表、执行工具并接收结果，再将工具结果作为附加输入与用户上下文合并。",
+    "caption": "数字 1—5 标出工具调用顺序；附加上下文框还列出了 RAG。",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "04.png",
+    "alt": "神经网络接收“cat sat on a”四个词，经多层节点连接计算后，将下一个词预测为“mat”，标注概率为 97%。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "05.png",
+    "alt": "左侧 Llama 2 70B 文件夹包含 140GB 的 parameters 与约 500 行 C 代码的 run.c，右侧是带断网符号的 MacBook 和模型聊天界面。",
+    "caption": "",
+    "kind": "photo",
+    "decorative": false
+  },
+  {
+    "file": "06.png",
+    "alt": "图中用箭头连接约 10TB 互联网文本、服务器训练和约 140GB 的 parameters.zip，训练标注为 6000 块 GPU、12 天、约 200 万美元及约 1e24 FLOPS。",
+    "caption": "",
+    "kind": "photo",
+    "decorative": false
+  },
+  {
+    "file": "07.png",
+    "alt": "训练流程分为预训练与微调：前者以约 10TB 文本和约 6000 块 GPU 得到基础模型，后者以约 10 万条高质量问答或比较数据得到助手模型，再经评估、部署和持续监控。",
+    "caption": "图中将预训练标为约每年一次，将微调及其后续反馈循环标为约每周一次。",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "08.png",
+    "alt": "同一“写一首关于回形针的俳句”提示下展示三份不同的 ChatGPT 答案，图中说明比较答案通常比直接撰写答案更容易。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "09.png",
+    "alt": "中央 LLM OS 架构把 LLM 标为 CPU、上下文窗口标为 RAM，并双向连接视频和音频、传统软件工具、文件系统、浏览器及其他 LLM。",
+    "caption": "核心架构在中央白框内，外围是终端、操作系统、浏览器和 AI 产品等拼贴素材。",
+    "kind": "photo",
+    "decorative": false
+  },
+  {
+    "file": "10.png",
+    "alt": "任务进入推理节点后，通过“行动”调用工具，再把工具的“观察”结果送回推理形成循环，任务完成后输出执行结果。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  },
+  {
+    "file": "11.png",
+    "alt": "任务先规划并生成步骤，执行阶段与工具双向交互；执行后可进入“完善”环节更新步骤，或在任务完成后输出执行结果。",
+    "caption": "",
+    "kind": "graphic",
+    "decorative": false
+  }
+]

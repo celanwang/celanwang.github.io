@@ -1,0 +1,295 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{items.length > 0 && (
+  <nav class="toc" aria-label="On this page" data-toc>
+    <details class="toc-mobile">
+      <summary>On this page</summary>
+      <ol>
+        {items.map((h) => (
+          <li class:list={[`depth-${h.depth}`]}>
+            <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
+          </li>
+        ))}
+      </ol>
+    </details>
+
+    <div class="toc-desktop">
+      <p class="toc-title">On this page</p>
+      <ol>
+        {items.map((h) => (
+          <li class:list={[`depth-${h.depth}`]}>
+            <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </nav>
+)}
+
+<style>
+  .toc {
+    margin: 0 0 1.5rem;
+  }
+
+  .toc-title {
+    margin: 0 0 0.75rem;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    margin: 0.35rem 0;
+  }
+
+  li.depth-3 {
+    padding-left: 0.85rem;
+  }
+
+  a {
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    transition: color var(--duration) var(--ease);
+  }
+
+  a:hover {
+    color: var(--ink);
+  }
+
+  a.is-active {
+    color: var(--accent);
+  }
+
+  .toc-mobile {
+    padding: 0 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-elevated);
+  }
+
+  .toc-mobile summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.75rem;
+    padding: 0.65rem 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--ink);
+    list-style: none;
+  }
+
+  .toc-mobile summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .toc-mobile summary::after {
+    content: "";
+    flex: 0 0 auto;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-right: 0.15rem;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg);
+  }
+
+  .toc-mobile[open] summary {
+    color: var(--accent);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .toc-mobile[open] summary::after {
+    transform: rotate(225deg);
+  }
+
+  .toc-mobile ol {
+    max-height: calc(100vh - 12rem);
+    max-height: calc(100dvh - 12rem);
+    padding-right: 0.25rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .toc-mobile[open] ol {
+    padding-top: 0.35rem;
+    padding-bottom: 0.65rem;
+  }
+
+  .toc-mobile li {
+    margin: 0;
+  }
+
+  .toc-mobile a {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.35rem 0;
+  }
+
+  .toc-desktop {
+    display: none;
+  }
+
+  @media (min-width: 1080px) {
+    .toc {
+      position: sticky;
+      top: 5.5rem;
+      max-height: calc(100vh - 7rem);
+      max-height: calc(100dvh - 7rem);
+      margin: 0;
+    }
+
+    .toc-mobile {
+      display: none;
+    }
+
+    .toc-desktop {
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 7rem);
+      max-height: calc(100dvh - 7rem);
+      padding-bottom: 0.25rem;
+    }
+
+    .toc-desktop .toc-title {
+      flex-shrink: 0;
+    }
+
+    .toc-desktop ol {
+      min-height: 0;
+      padding-right: 0.35rem;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      scrollbar-color: var(--line) transparent;
+    }
+
+    .toc-desktop li {
+      margin: 0;
+      padding-left: 0.85rem;
+      border-left: 2px solid var(--line);
+      transition: border-color var(--duration) var(--ease);
+    }
+
+    .toc-desktop li.depth-3 {
+      padding-left: 1.7rem;
+    }
+
+    .toc-desktop li:has(a.is-active) {
+      border-left-color: var(--accent);
+    }
+
+    .toc-desktop a {
+      display: block;
+      padding: 0.3rem 0;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector('[data-toc]');
+  if (root) {
+    const links = [...root.querySelectorAll('[data-toc-link]')];
+    const slugs = [...new Set(links.map((a) => a.getAttribute('data-toc-link')).filter(Boolean))];
+    const headings = slugs
+      .map((slug) => document.getElementById(slug))
+      .filter((el) => el instanceof HTMLElement);
+
+    function setActive(slug) {
+      links.forEach((link) => {
+        const match = link.getAttribute('data-toc-link') === slug;
+        link.classList.toggle('is-active', match);
+        if (match) {
+          link.setAttribute('aria-current', 'location');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
+    }
+
+    if (headings.length === 0) {
+      // nothing to observe
+    } else if ('IntersectionObserver' in window) {
+      const visible = new Map();
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            visible.set(entry.target.id, entry);
+          });
+
+          const headerOffset = 96;
+          let current = null;
+          let bestTop = -Infinity;
+
+          headings.forEach((h) => {
+            const entry = visible.get(h.id);
+            const top = h.getBoundingClientRect().top;
+            const intersecting = entry?.isIntersecting ?? top < window.innerHeight * 0.45;
+            if (intersecting && top <= headerOffset + 48 && top > bestTop) {
+              bestTop = top;
+              current = h.id;
+            }
+          });
+
+          if (!current) {
+            for (let i = headings.length - 1; i >= 0; i -= 1) {
+              if (headings[i].getBoundingClientRect().top <= headerOffset + 48) {
+                current = headings[i].id;
+                break;
+              }
+            }
+          }
+
+          if (!current) current = headings[0].id;
+          setActive(current);
+        },
+        {
+          rootMargin: '-80px 0px -55% 0px',
+          threshold: [0, 0.25, 0.5, 1],
+        }
+      );
+
+      headings.forEach((h) => io.observe(h));
+      setActive(headings[0].id);
+    } else {
+      const onScroll = () => {
+        const y = window.scrollY + 100;
+        let current = headings[0].id;
+        for (const h of headings) {
+          if (h.offsetTop <= y) current = h.id;
+        }
+        setActive(current);
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+  }
+</script>
