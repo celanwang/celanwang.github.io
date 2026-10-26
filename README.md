@@ -3,8 +3,8 @@
 [Chen Wang](https://github.com/celanwang) 的个人博客源码（Astro 5 静态构建）。
 UI 英文，内容中文：Notes on agentic engineering。
 
-托管于 GitHub Pages：<https://celanwang.github.io>。push 到 `main` 后由
-`.github/workflows/deploy.yml` 自动构建并发布，无需自有服务器。
+托管于 GitHub Pages，自有域名 <https://bytego.cloud>（源站自动构建部署，
+push 到 `main` 后约 1 分钟上线，无需自有服务器）。
 
 ## 环境要求
 
