@@ -39,6 +39,7 @@ npm run images      # 图片母版 → public 原图 + 派生展示图 + og-defa
 - 图片母版在 `scripts/images-src/`（请提交仓库，勿删）；优化只读取母版，不反复压缩派生产物
 - 每篇图文文章的 `scripts/images-src/blog/<slug>/images.json` 保存图片 alt、可选 caption 与类型（photo / graphic），供同步和图片优化共同使用
 - Markdown 图片使用 `![alt](/blog/slug/image.png "可选图注")`。新增或替换图片后手动执行 `npm run images`：原图保留在 `/blog/slug/`，展示图生成到 `/blog/_derived/slug/`；派生图缺失时构建会回退到原图。图片脚本会清理 Astro 的 Markdown 缓存，确保下次构建采用最新派生路径
+- 表格的多行内容使用 `<br>` 保持在同一逻辑单元格内，不要用裸换行延续表格行。渲染层会补齐行/列标题、窄屏分组和可键盘操作的横向滚动
 - 注意：Astro 会缓存 Markdown 渲染产物。修改 `src/lib/rehype-*.ts` 后若页面未更新，执行 `rm -rf node_modules/.astro .astro` 再构建
 
 ## 功能概览

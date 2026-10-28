@@ -121,7 +121,7 @@ Augment 指南列举的真实事件，勾勒了 Agent 沙箱必须覆盖的攻�
 |-|-|-|-|-|-|
 | **微 VM** | E2B、AWS Lambda、Firecracker | 硬件虚拟化 + 独立内核 | \~125–200ms | KVM/virtio 漏洞 | 实验性 |
 | **用户态内核** | gVisor、Modal | Sentry 拦截 syscall | 毫秒级 | Sentry bug + 宿主内核 bug | nvproxy 支持 |
-| **加固容器** | seccomp + AppArmor + K8s | namespace + cgroup | 秒级 | 单 CVE 或过滤绕过 |  |
+| **加固容器** | seccomp + AppArmor + K8s | namespace + cgroup | 秒级 | 单 CVE 或过滤绕过 | — |
 | **语言级** | Wasmtime、V8 Isolate | 线性内存 + capability | 亚毫秒 | 编译器/运行时 bug | 不支持 |
 
 位于最轻量级的一端是**语言级隔离**，以 Wasmtime 和 V8 Isolate 为代表。它们通过线性内存模型和基于 Capability 的安全模型，在单一进程内划定沙箱。其最大的优势是极致的**亚毫秒级**冷启动速度，极其适合高频、极短生命周期的函数执行。然而，其逃逸复杂度高度依赖于编译器或运行时的安全性，一旦出现 V8 漏洞即可被击穿；更致命的是，它目前几乎不支持 GPU 加速，也缺乏完整的操作系统语义，无法满足复杂 Agent 的需求。
@@ -763,13 +763,8 @@ func NewExecutorFromConfig(cfg sandbox.Config, client kubernetes.Interface, logg
 
 | **参考来源** | **文献类型** | **核心关注点** | **关键技术与特性** | **核心价值与应用场景** |
 |-|-|-|-|-|
-| [Firecrawl Blog](https://www.firecrawl.dev/blog/ai-agent-sandbox)  
-AI Agent Sandbox: How to Safely Run Autonomous Agents | 最佳实践指南 | Agent 沙箱的安全原则与隔离必要性 | 最小权限原则、严格的多级超时机制、网络出口过滤、无 root 权限容器、只读挂载。 | 防止 Agent 因幻觉或提示词注入 Prompt Injection 导致破坏宿主机、数据泄露及云资源滥用。主要面向 Web 自动化与外部工具调用场景。 |
-| [Augment Code](https://www.augmentcode.com/guides/agent-execution-sandbox)  
-What Is an Agent Execution Sandbox? | 技术架构指南 | AI 代码生成的生产级安全隔离策略 | 硬件级隔 MicroVMs、用户态内核、语言级沙箱 WASM/V8、基于 cgroup 的资源限制CPU/内存/PID 防御 Fork 炸弹、临时只读文件系统。 | 限制不受信任的 AI 生成代码在运行时的权限，防止逃逸攻击。确保代码生成、测试和执行在生产环境下的绝对安全。 |
-| [ArXiv 2605.22781](https://arxiv.org/abs/2605.22781)  
-DeltaBox: Scaling Stateful AI Agents... | 学术论文 | 毫秒级沙箱状态快照与回滚技术（优化状态型 Agent 扩展性） | DeltaState 基于增量的状态变更 、DeltaFS 写时复制的文件系统层切换、DeltaCR 增量进程转储、基于 Firecracker 的底层微型虚拟机。 | 将沙箱的检查点 Checkpoint 和回滚 Rollback 延迟从秒级骤降至毫秒级，打破大规模状态探索，如 MCTS 树搜索、强化学习的性能瓶颈。 |
-| [Agent-Sandbox](https://github.com/agent-sandbox/agent-sandbox)  
-agent-sandbox/agent-sandbox | 开源项目 | 企业级、云原生的开源 Agent 运行时沙箱 | 完全兼容 E2B 协议及 SDK、提供 MCP 模型上下文协议 服务端集成、基于 Kubernetes 的云原生架构、多租户与多会话隔离。 | 提供可私有化部署的商业沙箱替代方案。支持代码执行、浏览器自动化和终端控制，Agent 可通过 MCP 自动管理沙箱的全生命周期。 |
-| [Google Cloud Blog](https://cloud.google.com/blog/products/containers-kubernetes/bringing-you-agent-sandbox-on-gke-and-agent-substrate)  
-Bringing you Agent Sandbox on GKE | 云厂商发布 | 超大规模、高密度的 AI 智能体云基础设施 | GKE Agent Sandbox 基于 gVisor 的强安全隔离、Agent Substrate 专为高密度并发设计的开源调度面、Pod 快照与温水池技术。 | 解决百万级 Agent 并发导致的控制面瘫痪与算力浪费问题。实现闲置状态瞬间挂起，激活时 200 毫秒内极速恢复，消除冷启动，专为企业级超大规模 Agent 部署设计。 |
+| [Firecrawl Blog](https://www.firecrawl.dev/blog/ai-agent-sandbox)<br>AI Agent Sandbox: How to Safely Run Autonomous Agents | 最佳实践指南 | Agent 沙箱的安全原则与隔离必要性 | 最小权限原则、严格的多级超时机制、网络出口过滤、无 root 权限容器、只读挂载。 | 防止 Agent 因幻觉或提示词注入 Prompt Injection 导致破坏宿主机、数据泄露及云资源滥用。主要面向 Web 自动化与外部工具调用场景。 |
+| [Augment Code](https://www.augmentcode.com/guides/agent-execution-sandbox)<br>What Is an Agent Execution Sandbox? | 技术架构指南 | AI 代码生成的生产级安全隔离策略 | 硬件级隔 MicroVMs、用户态内核、语言级沙箱 WASM/V8、基于 cgroup 的资源限制CPU/内存/PID 防御 Fork 炸弹、临时只读文件系统。 | 限制不受信任的 AI 生成代码在运行时的权限，防止逃逸攻击。确保代码生成、测试和执行在生产环境下的绝对安全。 |
+| [ArXiv 2605.22781](https://arxiv.org/abs/2605.22781)<br>DeltaBox: Scaling Stateful AI Agents... | 学术论文 | 毫秒级沙箱状态快照与回滚技术（优化状态型 Agent 扩展性） | DeltaState 基于增量的状态变更 、DeltaFS 写时复制的文件系统层切换、DeltaCR 增量进程转储、基于 Firecracker 的底层微型虚拟机。 | 将沙箱的检查点 Checkpoint 和回滚 Rollback 延迟从秒级骤降至毫秒级，打破大规模状态探索，如 MCTS 树搜索、强化学习的性能瓶颈。 |
+| [Agent-Sandbox](https://github.com/agent-sandbox/agent-sandbox)<br>agent-sandbox/agent-sandbox | 开源项目 | 企业级、云原生的开源 Agent 运行时沙箱 | 完全兼容 E2B 协议及 SDK、提供 MCP 模型上下文协议 服务端集成、基于 Kubernetes 的云原生架构、多租户与多会话隔离。 | 提供可私有化部署的商业沙箱替代方案。支持代码执行、浏览器自动化和终端控制，Agent 可通过 MCP 自动管理沙箱的全生命周期。 |
+| [Google Cloud Blog](https://cloud.google.com/blog/products/containers-kubernetes/bringing-you-agent-sandbox-on-gke-and-agent-substrate)<br>Bringing you Agent Sandbox on GKE | 云厂商发布 | 超大规模、高密度的 AI 智能体云基础设施 | GKE Agent Sandbox 基于 gVisor 的强安全隔离、Agent Substrate 专为高密度并发设计的开源调度面、Pod 快照与温水池技术。 | 解决百万级 Agent 并发导致的控制面瘫痪与算力浪费问题。实现闲置状态瞬间挂起，激活时 200 毫秒内极速恢复，消除冷启动，专为企业级超大规模 Agent 部署设计。 |

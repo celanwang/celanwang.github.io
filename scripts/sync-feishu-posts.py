@@ -184,9 +184,31 @@ def markdown_image(alt, url, caption=None):
     return f"![{escape_markdown_alt(alt)}]({url}{title})"
 
 
+def normalize_breaks(body):
+    normalized = []
+    in_fence = False
+    in_table = False
+    for line in body.splitlines(keepends=True):
+        stripped = line.lstrip()
+        if stripped.startswith(("```", "~~~")):
+            in_fence = not in_fence
+            normalized.append(BR_RE.sub("\n", line))
+        elif in_fence:
+            normalized.append(BR_RE.sub("\n", line))
+        elif stripped.startswith("|"):
+            in_table = True
+            normalized.append(line)
+        elif in_table and stripped:
+            normalized.append(line)
+        else:
+            in_table = False
+            normalized.append(BR_RE.sub("\n", line))
+    return "".join(normalized)
+
+
 def clean_body(body, slug):
     body = GRID_RE.sub("", body)
-    body = BR_RE.sub("\n", body)
+    body = normalize_breaks(body)
     body = normalize_cjk(body)
 
     metadata_path = IMAGES_SRC / slug / "images.json"

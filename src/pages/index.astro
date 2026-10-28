@@ -20,31 +20,27 @@ const rest = posts.filter((post) => post.id !== lead?.id).slice(0, 5);
           <a class="link-more" href="/blog">All posts →</a>
         </div>
 
-        <div class="list" data-reveal-list>
-          <div class="reveal" style="transition-delay: 0ms">
+        <div class="list">
+          <PostRow
+            variant="lead"
+            badge={lead.data.featured ? 'Featured note' : 'Latest note'}
+            title={lead.data.title}
+            description={lead.data.description}
+            href={`/blog/${lead.id}/`}
+            date={lead.data.pubDate}
+            tags={lead.data.tags}
+            minutes={estimateReadingMinutes(lead.body)}
+          />
+          {rest.map((post) => (
             <PostRow
-              variant="lead"
-              badge={lead.data.featured ? 'Featured note' : 'Latest note'}
-              title={lead.data.title}
-              description={lead.data.description}
-              href={`/blog/${lead.id}/`}
-              date={lead.data.pubDate}
-              tags={lead.data.tags}
-              minutes={estimateReadingMinutes(lead.body)}
+              variant="row"
+              title={post.data.title}
+              description={post.data.description}
+              href={`/blog/${post.id}/`}
+              date={post.data.pubDate}
+              tags={post.data.tags}
+              minutes={estimateReadingMinutes(post.body)}
             />
-          </div>
-          {rest.map((post, i) => (
-            <div class="reveal" style={`transition-delay: ${(i + 1) * 55}ms`}>
-              <PostRow
-                variant="row"
-                title={post.data.title}
-                description={post.data.description}
-                href={`/blog/${post.id}/`}
-                date={post.data.pubDate}
-                tags={post.data.tags}
-                minutes={estimateReadingMinutes(post.body)}
-              />
-            </div>
           ))}
         </div>
       </div>
@@ -58,34 +54,10 @@ const rest = posts.filter((post) => post.id !== lead?.id).slice(0, 5);
   }
 
   .latest .section-head {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
 
   .latest .list :global(.lead) {
     margin-bottom: 0.5rem;
   }
 </style>
-
-<script>
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const list = document.querySelector('[data-reveal-list]');
-  const items = document.querySelectorAll('[data-reveal-list] .reveal');
-
-  if (!reduceMotion && list instanceof HTMLElement && items.length && 'IntersectionObserver' in window) {
-    list.classList.add('reveal-ready');
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-in');
-            io.unobserve(entry.target);
-          }
-        });
-      },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 }
-    );
-    items.forEach((el) => io.observe(el));
-  } else {
-    items.forEach((el) => el.classList.add('is-in'));
-  }
-</script>

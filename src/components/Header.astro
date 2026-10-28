@@ -96,11 +96,11 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
     position: sticky;
     top: 0;
     z-index: 40;
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     background: var(--header-bg);
     border-bottom: 1px solid transparent;
-    transition: background 0.25s var(--ease), border-color 0.25s var(--ease);
+    transition: background var(--duration) var(--ease), border-color var(--duration) var(--ease);
   }
 
   .site-header.is-scrolled {
@@ -112,13 +112,14 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 4.25rem;
+    min-height: var(--header-height);
     gap: 1rem;
   }
 
   .brand {
     display: inline-flex;
     align-items: center;
+    min-height: 2.75rem;
   }
 
   .brand-name {
@@ -126,7 +127,7 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
     font-weight: 700;
     font-size: 0.9375rem;
     letter-spacing: -0.02em;
-    color: var(--ink);
+    color: var(--text-primary);
   }
 
   .header-right {
@@ -138,33 +139,35 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
   .nav-desktop {
     display: none;
     align-items: center;
-    gap: 1.6rem;
+    gap: 1.5rem;
   }
 
   .nav-link {
     position: relative;
-    color: var(--ink-soft);
-    font-size: 0.9375rem;
-    font-weight: 500;
-    letter-spacing: 0.01em;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--text-secondary);
+    font-size: var(--fs-ui);
+    font-weight: 400;
   }
 
   .nav-link::after {
     content: "";
     position: absolute;
     left: 0;
-    bottom: -0.35rem;
+    bottom: 0.3rem;
     width: 100%;
     height: 1.5px;
-    background: var(--ink);
+    background: var(--accent);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.2s var(--ease);
+    transition: transform var(--duration) var(--ease);
   }
 
   .nav-link:hover,
   .nav-link.active {
-    color: var(--ink);
+    color: var(--text-primary);
   }
 
   .nav-link.active::after,
@@ -172,36 +175,30 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
     transform: scaleX(1);
   }
 
-  .github-link {
-    width: 2.75rem;
-    height: 2.75rem;
-    display: grid;
-    place-items: center;
-    border-radius: 999px;
-    color: var(--ink-soft);
-    transition: color 0.2s var(--ease), background 0.2s var(--ease);
-  }
-
-  .github-link:hover {
-    color: var(--ink);
-    background: var(--surface-hover);
-  }
-
+  .github-link,
   .theme-toggle {
     width: 2.75rem;
     height: 2.75rem;
     display: grid;
     place-items: center;
     border-radius: 999px;
-    border: 1px solid var(--line);
-    color: var(--ink-soft);
-    transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+    color: var(--text-secondary);
+    transition: color var(--duration) var(--ease), border-color var(--duration) var(--ease),
+      background var(--duration) var(--ease);
+  }
+
+  .github-link:hover,
+  .theme-toggle:hover {
+    color: var(--accent);
+    background: var(--surface-hover);
+  }
+
+  .theme-toggle {
+    border: 1px solid var(--border-default);
   }
 
   .theme-toggle:hover {
-    color: var(--ink);
-    border-color: var(--ink-soft);
-    background: var(--surface-hover);
+    border-color: var(--accent);
   }
 
   .theme-toggle .icon {
@@ -226,47 +223,49 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
   .nav-toggle span {
     display: block;
     width: 1.2rem;
-    height: 2px;
+    height: 1.5px;
     background: var(--ink);
-    transition: transform 0.25s var(--ease), opacity 0.25s var(--ease);
+    transition: transform var(--duration) var(--ease);
   }
 
   .nav-toggle[aria-expanded='true'] span:first-of-type {
-    transform: translateY(4px) rotate(45deg);
+    transform: translateY(3.75px) rotate(45deg);
   }
 
   .nav-toggle[aria-expanded='true'] span:last-of-type {
-    transform: translateY(-4px) rotate(-45deg);
+    transform: translateY(-3.75px) rotate(-45deg);
   }
 
   .mobile-nav {
-    border-top: 1px solid var(--line-soft);
+    border-top: 1px solid var(--border-subtle);
     background: var(--mobile-nav-bg);
-    animation: slide-down 0.25s var(--ease);
   }
 
   .mobile-nav-inner {
     display: grid;
-    gap: 0.25rem;
-    padding: 0.75rem 0 1rem;
+    padding: 0.5rem 0 0.75rem;
   }
 
   .mobile-nav a {
-    padding: 0.75rem 0;
-    font-weight: 600;
-    color: var(--ink-soft);
-    border-bottom: 1px solid var(--line-soft);
-    transition: color 0.2s var(--ease);
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.5rem 0;
+    font-size: var(--fs-ui);
+    font-weight: 400;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+    transition: color var(--duration) var(--ease);
   }
 
   .mobile-nav a:hover,
   .mobile-nav a.active {
-    color: var(--ink);
+    color: var(--accent);
   }
 
   .mobile-nav a.active {
     box-shadow: inset 2px 0 0 var(--accent);
-    padding-left: 0.65rem;
+    padding-left: 0.75rem;
   }
 
   .sr-only {
@@ -280,26 +279,11 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
     border: 0;
   }
 
-  @keyframes slide-down {
-    from {
-      opacity: 0;
-      transform: translateY(-6px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
   @media (min-width: 768px) {
     .nav-desktop { display: flex; }
     .nav-toggle,
     .mobile-nav { display: none !important; }
     .header-right { gap: 1rem; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .mobile-nav { animation: none; }
   }
 </style>
 

@@ -10,17 +10,33 @@ interface Props {
 }
 
 const { headings } = Astro.props;
-const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const sections: (Heading & { children: Heading[] })[] = [];
+for (const heading of headings) {
+  if (heading.depth === 2) {
+    sections.push({ ...heading, children: [] });
+  } else if (heading.depth === 3 && sections.length > 0) {
+    sections[sections.length - 1].children.push(heading);
+  }
+}
 ---
 
-{items.length > 0 && (
+{sections.length > 0 && (
   <nav class="toc" aria-label="On this page" data-toc>
     <details class="toc-mobile">
       <summary>On this page</summary>
       <ol>
-        {items.map((h) => (
-          <li class:list={[`depth-${h.depth}`]}>
-            <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
+        {sections.map((section) => (
+          <li class="toc-section" data-toc-section={section.slug}>
+            <a href={`#${section.slug}`} data-toc-link={section.slug}>{section.text}</a>
+            {section.children.length > 0 && (
+              <ol class="toc-subsections">
+                {section.children.map((heading) => (
+                  <li>
+                    <a href={`#${heading.slug}`} data-toc-link={heading.slug}>{heading.text}</a>
+                  </li>
+                ))}
+              </ol>
+            )}
           </li>
         ))}
       </ol>
@@ -29,9 +45,18 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     <div class="toc-desktop">
       <p class="toc-title">On this page</p>
       <ol>
-        {items.map((h) => (
-          <li class:list={[`depth-${h.depth}`]}>
-            <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
+        {sections.map((section) => (
+          <li class="toc-section" data-toc-section={section.slug}>
+            <a href={`#${section.slug}`} data-toc-link={section.slug}>{section.text}</a>
+            {section.children.length > 0 && (
+              <ol class="toc-subsections">
+                {section.children.map((heading) => (
+                  <li>
+                    <a href={`#${heading.slug}`} data-toc-link={heading.slug}>{heading.text}</a>
+                  </li>
+                ))}
+              </ol>
+            )}
           </li>
         ))}
       </ol>
@@ -41,17 +66,19 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
 <style>
   .toc {
-    margin: 0 0 1.5rem;
+    margin: 0 0 0.5rem;
+    color: var(--text-secondary);
+    font-size: var(--fs-toc);
+    line-height: var(--lh-ui);
   }
 
   .toc-title {
     margin: 0 0 0.75rem;
-    font-family: var(--font-body);
-    font-size: 0.75rem;
+    font-size: var(--fs-eyebrow);
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--text-tertiary);
   }
 
   ol {
@@ -60,35 +87,54 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     list-style: none;
   }
 
-  li {
-    margin: 0.35rem 0;
-  }
-
-  li.depth-3 {
-    padding-left: 0.85rem;
-  }
-
   a {
-    color: var(--ink-soft);
-    font-size: 0.9rem;
-    font-weight: 500;
-    line-height: 1.45;
+    position: relative;
+    display: block;
+    color: var(--text-secondary);
+    font-weight: 400;
     overflow-wrap: anywhere;
     transition: color var(--duration) var(--ease);
   }
 
   a:hover {
-    color: var(--ink);
+    color: var(--text-primary);
   }
 
   a.is-active {
     color: var(--accent);
   }
 
+  .toc-subsections {
+    display: none;
+  }
+
+  .toc-section.is-current > .toc-subsections {
+    display: block;
+  }
+
+  .toc-section.is-current > a {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .toc-section.is-current > a.is-active {
+    color: var(--accent);
+  }
+
+  .toc-subsections a {
+    padding-left: 0.85rem;
+    color: var(--text-tertiary);
+    font-size: var(--fs-small);
+  }
+
+  .toc-subsections a.is-active {
+    color: var(--accent);
+  }
+
   .toc-mobile {
-    padding: 0 0.9rem;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
+    padding: 0 0.75rem;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
     background: var(--bg-elevated);
   }
 
@@ -98,10 +144,11 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     justify-content: space-between;
     gap: 1rem;
     min-height: 2.75rem;
-    padding: 0.65rem 0;
+    padding: 0.55rem 0;
     cursor: pointer;
-    font-weight: 600;
-    color: var(--ink);
+    font-size: var(--fs-ui);
+    font-weight: 500;
+    color: var(--text-primary);
     list-style: none;
   }
 
@@ -112,45 +159,47 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
   .toc-mobile summary::after {
     content: "";
     flex: 0 0 auto;
-    width: 0.5rem;
-    height: 0.5rem;
-    margin-right: 0.15rem;
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-right: 0.2rem;
     border-right: 1.5px solid currentColor;
     border-bottom: 1.5px solid currentColor;
     transform: rotate(45deg);
+    transition: transform var(--duration) var(--ease);
   }
 
   .toc-mobile[open] summary {
     color: var(--accent);
-    border-bottom: 1px solid var(--line-soft);
   }
 
   .toc-mobile[open] summary::after {
     transform: rotate(225deg);
   }
 
-  .toc-mobile ol {
-    max-height: calc(100vh - 12rem);
-    max-height: calc(100dvh - 12rem);
-    padding-right: 0.25rem;
+  .toc-mobile > ol {
+    max-height: calc(100vh - 14rem);
+    max-height: calc(100dvh - 14rem);
     overflow-y: auto;
     overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-default) transparent;
   }
 
-  .toc-mobile[open] ol {
-    padding-top: 0.35rem;
-    padding-bottom: 0.65rem;
-  }
-
-  .toc-mobile li {
-    margin: 0;
+  .toc-mobile[open] > ol {
+    padding: 0.4rem 0.25rem 0.6rem 0;
+    border-top: 1px solid var(--border-subtle);
   }
 
   .toc-mobile a {
     display: flex;
     align-items: center;
     min-height: 2.75rem;
-    padding: 0.35rem 0;
+    padding: 0.4rem 0.25rem;
+    font-size: var(--fs-ui);
+  }
+
+  .toc-mobile .toc-subsections a {
+    padding-left: 1rem;
   }
 
   .toc-desktop {
@@ -160,9 +209,9 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
   @media (min-width: 1080px) {
     .toc {
       position: sticky;
-      top: 5.5rem;
-      max-height: calc(100vh - 7rem);
-      max-height: calc(100dvh - 7rem);
+      top: calc(var(--header-height) + 1.25rem);
+      max-height: calc(100vh - var(--header-height) - 2.5rem);
+      max-height: calc(100dvh - var(--header-height) - 2.5rem);
       margin: 0;
     }
 
@@ -173,42 +222,53 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     .toc-desktop {
       display: flex;
       flex-direction: column;
-      max-height: calc(100vh - 7rem);
-      max-height: calc(100dvh - 7rem);
-      padding-bottom: 0.25rem;
+      max-height: inherit;
     }
 
     .toc-desktop .toc-title {
       flex-shrink: 0;
     }
 
-    .toc-desktop ol {
+    .toc-desktop > ol {
       min-height: 0;
-      padding-right: 0.35rem;
+      padding-right: 0.5rem;
       overflow-y: auto;
       overscroll-behavior: contain;
       scrollbar-width: thin;
-      scrollbar-color: var(--line) transparent;
+      scrollbar-color: var(--border-default) transparent;
+      border-left: 1px solid var(--border-subtle);
     }
 
-    .toc-desktop li {
-      margin: 0;
-      padding-left: 0.85rem;
-      border-left: 2px solid var(--line);
-      transition: border-color var(--duration) var(--ease);
-    }
-
-    .toc-desktop li.depth-3 {
-      padding-left: 1.7rem;
-    }
-
-    .toc-desktop li:has(a.is-active) {
-      border-left-color: var(--accent);
+    .toc-section {
+      margin: 0.15rem 0;
     }
 
     .toc-desktop a {
-      display: block;
-      padding: 0.3rem 0;
+      padding: 0.35rem 0.5rem 0.35rem 0.75rem;
+    }
+
+    .toc-desktop a::before {
+      content: "";
+      position: absolute;
+      top: 0.4rem;
+      bottom: 0.4rem;
+      left: -0.5rem;
+      width: 2px;
+      background: transparent;
+    }
+
+    .toc-desktop a.is-active::before {
+      background: var(--accent);
+    }
+
+    .toc-desktop .toc-subsections a {
+      padding-left: 1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toc-mobile summary::after {
+      transition: none;
     }
   }
 </style>
@@ -216,80 +276,76 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
 <script>
   const root = document.querySelector('[data-toc]');
   if (root) {
-    const links = [...root.querySelectorAll('[data-toc-link]')];
-    const slugs = [...new Set(links.map((a) => a.getAttribute('data-toc-link')).filter(Boolean))];
+    const links = [...root.querySelectorAll<HTMLElement>('[data-toc-link]')];
+    const sections = [...root.querySelectorAll<HTMLElement>('[data-toc-section]')];
+    const slugs = [...new Set(
+      links.map((link) => link.dataset.tocLink).filter((slug): slug is string => Boolean(slug)),
+    )];
     const headings = slugs
       .map((slug) => document.getElementById(slug))
-      .filter((el) => el instanceof HTMLElement);
+      .filter((heading) => heading instanceof HTMLElement);
+    let activeSlug = '';
+    let scheduled = 0;
 
-    function setActive(slug) {
-      links.forEach((link) => {
-        const match = link.getAttribute('data-toc-link') === slug;
-        link.classList.toggle('is-active', match);
-        if (match) {
-          link.setAttribute('aria-current', 'location');
-        } else {
-          link.removeAttribute('aria-current');
-        }
+    function keepVisible(scroller: Element, slug: string) {
+      if (scroller.clientHeight === 0) return;
+      const link = [...scroller.querySelectorAll<HTMLElement>('[data-toc-link]')]
+        .find((item) => item.dataset.tocLink === slug);
+      if (!(link instanceof HTMLElement)) return;
+      const linkBox = link.getBoundingClientRect();
+      const scrollBox = scroller.getBoundingClientRect();
+      if (linkBox.top < scrollBox.top + 8) {
+        scroller.scrollTop -= scrollBox.top + 8 - linkBox.top;
+      } else if (linkBox.bottom > scrollBox.bottom - 8) {
+        scroller.scrollTop += linkBox.bottom - scrollBox.bottom + 8;
+      }
+    }
+
+    function setActive(slug: string) {
+      if (slug === activeSlug) return;
+      activeSlug = slug;
+      const activeLink = links.find((link) => link.dataset.tocLink === slug);
+      const activeSection = activeLink?.closest('[data-toc-section]')?.getAttribute('data-toc-section');
+      sections.forEach((section) => {
+        section.classList.toggle('is-current', section.dataset.tocSection === activeSection);
       });
+      links.forEach((link) => {
+        const match = link.dataset.tocLink === slug;
+        link.classList.toggle('is-active', match);
+        if (match) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+      root.querySelectorAll('.toc-desktop > ol, .toc-mobile[open] > ol')
+        .forEach((scroller) => keepVisible(scroller, slug));
     }
 
-    if (headings.length === 0) {
-      // nothing to observe
-    } else if ('IntersectionObserver' in window) {
-      const visible = new Map();
-
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            visible.set(entry.target.id, entry);
-          });
-
-          const headerOffset = 96;
-          let current = null;
-          let bestTop = -Infinity;
-
-          headings.forEach((h) => {
-            const entry = visible.get(h.id);
-            const top = h.getBoundingClientRect().top;
-            const intersecting = entry?.isIntersecting ?? top < window.innerHeight * 0.45;
-            if (intersecting && top <= headerOffset + 48 && top > bestTop) {
-              bestTop = top;
-              current = h.id;
-            }
-          });
-
-          if (!current) {
-            for (let i = headings.length - 1; i >= 0; i -= 1) {
-              if (headings[i].getBoundingClientRect().top <= headerOffset + 48) {
-                current = headings[i].id;
-                break;
-              }
-            }
-          }
-
-          if (!current) current = headings[0].id;
-          setActive(current);
-        },
-        {
-          rootMargin: '-80px 0px -55% 0px',
-          threshold: [0, 0.25, 0.5, 1],
-        }
-      );
-
-      headings.forEach((h) => io.observe(h));
-      setActive(headings[0].id);
-    } else {
-      const onScroll = () => {
-        const y = window.scrollY + 100;
-        let current = headings[0].id;
-        for (const h of headings) {
-          if (h.offsetTop <= y) current = h.id;
-        }
-        setActive(current);
-      };
-      onScroll();
-      window.addEventListener('scroll', onScroll, { passive: true });
+    function updateActive() {
+      scheduled = 0;
+      if (headings.length === 0) return;
+      const offset = (document.querySelector('.site-header')?.getBoundingClientRect().height ?? 68) + 20;
+      let current = headings[0];
+      for (const heading of headings) {
+        if (heading.getBoundingClientRect().top <= offset) current = heading;
+        else break;
+      }
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+        current = headings[headings.length - 1];
+      }
+      setActive(current.id);
     }
+
+    function scheduleUpdate() {
+      if (!scheduled) scheduled = requestAnimationFrame(updateActive);
+    }
+
+    updateActive();
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+    root.querySelector('.toc-mobile summary')?.addEventListener('click', () => {
+      requestAnimationFrame(() => {
+        const scroller = root.querySelector('.toc-mobile[open] > ol');
+        if (scroller) keepVisible(scroller, activeSlug);
+      });
+    });
   }
 </script>

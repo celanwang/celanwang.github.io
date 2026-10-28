@@ -121,12 +121,12 @@ const jsonLd = {
 
 <style>
   .post {
-    padding-top: 4rem;
+    padding-top: 3.5rem;
   }
 
   .progress {
     position: fixed;
-    top: 4.25rem;
+    top: var(--header-height);
     left: 0;
     right: 0;
     z-index: 39;
@@ -145,7 +145,7 @@ const jsonLd = {
 
   .post-shell {
     display: grid;
-    gap: 1.25rem 2rem;
+    gap: 1rem 2rem;
     width: min(100% - 2.5rem, var(--measure));
   }
 
@@ -165,18 +165,18 @@ const jsonLd = {
     margin: 0;
     font-size: var(--fs-title);
     font-weight: 600;
-    letter-spacing: 0;
-    line-height: 1.3;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
     line-break: strict;
     overflow-wrap: break-word;
   }
 
   .post-deck {
     max-width: 38rem;
-    margin: 1.25rem 0 0;
-    color: var(--muted);
-    font-size: 1.125rem;
-    line-height: 1.75;
+    margin: 1.125rem 0 0;
+    color: var(--text-secondary);
+    font-size: 1.0625rem;
+    line-height: 1.8;
     line-break: strict;
     overflow-wrap: break-word;
   }
@@ -184,7 +184,7 @@ const jsonLd = {
   .meta {
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: 0.75rem;
     margin-top: 1.25rem;
   }
 
@@ -193,14 +193,15 @@ const jsonLd = {
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem 0.65rem;
-    color: var(--muted);
+    color: var(--text-tertiary);
   }
 
   time,
   .minutes,
   .updated {
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: var(--fs-small);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
   }
 
   .tags {
@@ -215,63 +216,79 @@ const jsonLd = {
   .tags a {
     display: inline-flex;
     align-items: center;
-    padding: 0.12rem 0.55rem;
-    border: 1px solid var(--line);
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--border-default);
     border-radius: 999px;
-    color: var(--ink-soft);
-    font-size: 0.75rem;
-    font-weight: 500;
-    line-height: 1.5;
+    color: var(--text-secondary);
+    font-size: var(--fs-eyebrow);
+    font-weight: 400;
+    line-height: var(--lh-ui);
     transition: color var(--duration) var(--ease), border-color var(--duration) var(--ease),
       background var(--duration) var(--ease);
   }
 
   .tags a:hover {
     color: var(--accent);
-    border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--border-default));
     background: var(--accent-soft);
   }
 
   .prose {
     min-width: 0;
     max-width: 100%;
-    margin-top: 3rem;
-    font-size: 1.0625rem;
-    line-height: 1.85;
-    color: var(--ink-soft);
+    margin-top: 1.25rem;
+    font-size: var(--fs-reading);
+    line-height: var(--lh-reading);
+    color: var(--text-secondary);
     hanging-punctuation: first allow-end;
     text-autospace: normal;
     line-break: strict;
     overflow-wrap: break-word;
   }
 
+  .prose > :global(h2:first-child) {
+    margin-top: 0;
+  }
+
   .prose :global(h2),
   .prose :global(h3),
   .prose :global(h4) {
     position: relative;
-    color: var(--ink);
+    color: var(--text-primary);
     font-family: var(--font-display);
     font-weight: 600;
     letter-spacing: 0;
     line-height: 1.4;
     line-break: strict;
-    scroll-margin-top: 5.5rem;
+    scroll-margin-top: calc(var(--header-height) + 1rem);
+    overflow-wrap: break-word;
   }
 
   .prose :global(h2) {
-    margin: 3.25rem 0 1.1rem;
-    font-size: clamp(var(--fs-h2), 1.35rem + 0.6vw, 1.75rem);
+    margin: 3.25rem 0 1rem;
+    font-size: clamp(1.5rem, 1.35rem + 0.5vw, 1.625rem);
+    letter-spacing: -0.01em;
   }
 
   .prose :global(h3) {
-    margin: 2.5rem 0 0.9rem;
-    font-size: clamp(var(--fs-h3), 1.15rem + 0.4vw, 1.375rem);
+    margin: 2.5rem 0 0.85rem;
+    font-size: clamp(1.25rem, 1.15rem + 0.3vw, 1.375rem);
   }
 
   .prose :global(h4) {
-    margin: 2rem 0 0.75rem;
-    font-size: 1.125rem;
-    line-height: 1.5;
+    margin: 2.25rem 0 0.65rem;
+    font-size: var(--fs-h4);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 700px) {
+    .post {
+      padding-top: 2.5rem;
+    }
+
+    .post-deck {
+      font-size: var(--fs-body);
+    }
   }
 
   .prose :global(.heading-anchor) {
@@ -423,11 +440,11 @@ const jsonLd = {
 
   .prose :global(.code-lang) {
     font-family: var(--font-mono);
-    font-size: 0.6875rem;
+    font-size: var(--fs-eyebrow);
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--text-tertiary);
   }
 
   .prose :global(.code-wrap pre) {
@@ -435,8 +452,14 @@ const jsonLd = {
     padding: 1rem 1.15rem;
     overflow-x: auto;
     background: transparent !important;
-    font-size: 0.875rem;
-    line-height: 1.7;
+    font-size: var(--fs-code);
+    line-height: 1.75;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-default) transparent;
+  }
+
+  .prose :global(.code-wrap pre:focus-visible) {
+    outline-offset: -3px;
   }
 
   .prose :global(.copy-btn) {
@@ -445,9 +468,9 @@ const jsonLd = {
     border: 1px solid transparent;
     border-radius: 999px;
     background: transparent;
-    color: var(--muted);
+    color: var(--text-tertiary);
     font-family: var(--font-body);
-    font-size: 0.72rem;
+    font-size: var(--fs-eyebrow);
     font-weight: 500;
     cursor: pointer;
     transition: color var(--duration) var(--ease), border-color var(--duration) var(--ease),
@@ -490,87 +513,200 @@ const jsonLd = {
   }
 
   .prose :global(.table-frame) {
-    position: relative;
+    min-width: 0;
     max-width: 100%;
-    margin: 1.75rem 0;
-  }
-
-  .prose :global(.table-frame)::before,
-  .prose :global(.table-frame)::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 1.6rem;
-    z-index: 1;
-    width: 1.5rem;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity var(--duration) var(--ease);
-  }
-
-  .prose :global(.table-frame)::before {
-    left: 0;
-    background: linear-gradient(to right, var(--bg), transparent);
-  }
-
-  .prose :global(.table-frame)::after {
-    right: 0;
-    background: linear-gradient(to left, var(--bg), transparent);
-  }
-
-  .prose :global(.table-frame[data-left-edge='true'])::before,
-  .prose :global(.table-frame[data-right-edge='true'])::after {
-    opacity: 1;
+    margin: 2rem 0;
+    font-size: var(--fs-table);
+    line-height: 1.7;
   }
 
   .prose :global(.table-scroll) {
     width: 100%;
     max-width: 100%;
-    margin: 1.75rem 0;
     overflow-x: auto;
     overscroll-behavior-x: contain;
+    border: 1px solid var(--border-default);
     border-radius: var(--radius-sm);
+    background: var(--table-bg);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-default) var(--table-bg);
     -webkit-overflow-scrolling: touch;
   }
 
-  .prose :global(.table-frame > .table-scroll) {
-    margin: 0;
-  }
-
   .prose :global(.table-scroll-hint) {
-    display: none;
-    align-items: center;
-    gap: 0.35rem;
-    margin: 0;
-    padding: 0.45rem 0.1rem 0;
-    border-top: 1px solid var(--line-soft);
-    color: var(--muted);
-    font-size: 0.75rem;
-    line-height: 1.4;
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin: 0.55rem 0 0;
+    color: var(--text-tertiary);
+    font-size: var(--fs-small);
+    line-height: var(--lh-ui);
   }
 
-  .prose :global(.table-frame[data-overflow='true'] .table-scroll-hint) {
-    display: flex;
+  .prose :global(.table-scroll-hint[hidden]) {
+    display: none;
   }
 
   .prose :global(.table-scroll table) {
     width: 100%;
-    min-width: max-content;
-    border-collapse: collapse;
     margin: 0;
-    font-size: 0.95rem;
+    border-spacing: 0;
+    border-collapse: separate;
+    table-layout: fixed;
+    background: var(--table-bg);
+    font-size: inherit;
+    line-height: inherit;
+    font-variant-numeric: tabular-nums;
   }
+
+  .prose :global(.table-scroll[data-columns='3'] table) { min-width: 36rem; }
+  .prose :global(.table-scroll[data-columns='4'] table) { min-width: 44rem; }
+  .prose :global(.table-scroll[data-columns='5'] table) { min-width: 54rem; }
+  .prose :global(.table-scroll[data-columns='6'] table) { min-width: 62rem; }
+
+  .prose :global(.table-scroll[data-columns='2'] tr > :first-child) { width: 30%; }
+  .prose :global(.table-scroll[data-columns='3'] tr > :first-child) { width: 32%; }
+  .prose :global(.table-scroll[data-columns='4'] tr > :first-child) { width: 23%; }
+  .prose :global(.table-scroll[data-columns='5'] tr > :first-child),
+  .prose :global(.table-scroll[data-columns='6'] tr > :first-child) { width: 18%; }
 
   .prose :global(th),
   .prose :global(td) {
-    border: 1px solid var(--line);
-    padding: 0.65rem 0.75rem;
+    padding: 0.75rem 0.85rem;
+    border-bottom: 1px solid var(--border-subtle);
     text-align: left;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    word-break: normal;
   }
 
-  .prose :global(th) {
-    background: var(--surface-muted);
-    color: var(--ink);
+  .prose :global(th + th),
+  .prose :global(td + td),
+  .prose :global(th + td) {
+    border-left: 1px solid var(--border-subtle);
+  }
+
+  .prose :global(thead th) {
+    border-bottom-color: var(--border-default);
+    background: var(--table-head-bg);
+    color: var(--text-primary);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    line-height: var(--lh-ui);
+  }
+
+  .prose :global(tbody th) {
+    background: var(--table-row-head-bg);
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .prose :global(tbody tr:last-child > *) {
+    border-bottom: 0;
+  }
+
+  .prose :global(.table-cell-label) {
+    display: none;
+  }
+
+  @media (max-width: 600px) {
+    .prose :global(.table-scroll[data-layout='stack']) {
+      overflow: visible;
+      border: 0;
+      background: transparent;
+    }
+
+    .prose :global(.table-scroll[data-layout='stack'] table),
+    .prose :global(.table-scroll[data-layout='stack'] tbody) {
+      display: block;
+      min-width: 0;
+      background: transparent;
+    }
+
+    .prose :global(.table-scroll[data-layout='stack'] thead) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .prose :global(.table-scroll[data-layout='stack'] tbody tr) {
+      display: block;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .prose :global(.table-scroll[data-layout='stack'] tbody tr:first-child) {
+      border-top: 1px solid var(--border-default);
+    }
+
+    .prose :global(.table-scroll[data-layout='stack'] tbody th),
+    .prose :global(.table-scroll[data-layout='stack'] tbody td) {
+      display: block;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    .prose :global(.table-scroll[data-layout='stack'] tbody tr > :first-child) {
+      width: auto;
+    }
+
+    .prose :global(.table-scroll[data-layout='stack'] tbody th) {
+      margin-bottom: 0.85rem;
+      font-size: var(--fs-body);
+      font-weight: 600;
+      line-height: var(--lh-ui);
+    }
+
+    .prose :global(.table-scroll[data-layout='stack'] tbody td + td) {
+      margin-top: 0.9rem;
+    }
+
+    .prose :global(.table-scroll[data-layout='stack'] .table-cell-label) {
+      display: block;
+      margin-bottom: 0.25rem;
+      color: var(--text-tertiary);
+      font-size: var(--fs-eyebrow);
+      font-weight: 500;
+      line-height: var(--lh-ui);
+    }
+
+    .prose :global(.table-scroll[data-layout='stack'] .table-cell-value) {
+      display: block;
+    }
+
+    .prose :global(.table-scroll[data-layout='stack'] + .table-scroll-hint) {
+      display: none;
+    }
+
+    .prose :global(.table-scroll[data-layout='matrix'] tbody th),
+    .prose :global(.table-scroll[data-layout='matrix'] thead th:first-child) {
+      position: sticky;
+      left: 0;
+      width: 8rem;
+      border-right: 1px solid var(--border-default);
+    }
+
+    .prose :global(.table-scroll[data-layout='matrix'] tbody th) {
+      z-index: 1;
+    }
+
+    .prose :global(.table-scroll[data-layout='matrix'] thead th:first-child) {
+      z-index: 2;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .prose :global(.table-frame:not([data-layout='key-value'])) {
+      width: calc(100% + 10rem);
+      max-width: none;
+    }
   }
 
   @media (pointer: coarse) {
@@ -654,8 +790,9 @@ const jsonLd = {
     const maxScroll = region.scrollWidth - region.clientWidth;
     const hasOverflow = maxScroll > 1;
     frame.dataset.overflow = String(hasOverflow);
-    frame.dataset.leftEdge = String(hasOverflow && region.scrollLeft > 1);
-    frame.dataset.rightEdge = String(hasOverflow && region.scrollLeft < maxScroll - 1);
+    region.tabIndex = hasOverflow ? 0 : -1;
+    const hint = frame.querySelector('.table-scroll-hint');
+    if (hint instanceof HTMLElement) hint.hidden = !hasOverflow;
   }
 
   function updateTables() {

@@ -5,19 +5,19 @@ const loopWords = ['think', 'build', 'measure', 'learn'];
 <section class="hero">
   <div class="container hero-inner">
     <div class="hero-copy">
-      <div class="identity fade-up">
+      <div class="identity">
         <img src="/images/avatar.webp" alt="" width="40" height="40" loading="eager" decoding="async" />
         <p class="eyebrow">Chen Wang — Agentic Engineer</p>
       </div>
-      <h1 class="hero-title fade-up fade-up-delay-1">Notes on agentic engineering.</h1>
-      <p class="hero-lede fade-up fade-up-delay-2">
+      <h1 class="hero-title">Notes on agentic engineering.</h1>
+      <p class="hero-lede">
         Building reliable agents through simple systems, explicit evaluation, and tight feedback loops.
       </p>
-      <div class="actions fade-up fade-up-delay-3">
+      <div class="actions">
         <a class="btn btn-primary" href="/blog">Read the posts</a>
         <a class="btn btn-ghost" href="/about">About me</a>
       </div>
-      <p class="loop-compact fade-up fade-up-delay-2" aria-label="think, build, measure, learn, repeat">
+      <p class="loop-compact" aria-label="think, build, measure, learn, repeat">
         {loopWords.map((word, i) => (
           <>
             <span>{word}</span>
@@ -27,7 +27,7 @@ const loopWords = ['think', 'build', 'measure', 'learn'];
       </p>
     </div>
 
-    <figure class="loop-figure fade-up fade-up-delay-2">
+    <figure class="loop-figure">
       <div class="loop-canvas" role="img" aria-label="A continuous engineering loop: think, build, measure, learn, repeat">
         <svg viewBox="0 0 420 360" aria-hidden="true">
           <defs>
@@ -67,7 +67,7 @@ const loopWords = ['think', 'build', 'measure', 'learn'];
 
 <style>
   .hero {
-    padding: 4.75rem 0 4rem;
+    padding: 4rem 0 3.5rem;
   }
 
   .hero-inner {

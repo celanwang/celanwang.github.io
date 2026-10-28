@@ -84,6 +84,10 @@ export function rehypeCodeWrap() {
       if (isCodeWrap(parent)) return;
 
       const label = detectLanguage(node);
+      node.properties ??= {};
+      node.properties.role ??= 'region';
+      node.properties.tabIndex ??= 0;
+      node.properties.ariaLabel ??= `${label} code`;
       const wrap: Element = {
         type: 'element',
         tagName: 'div',
